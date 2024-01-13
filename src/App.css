@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap");
+
+body {
+  height: 100vh;
+  width: 100vw;
+  font-family: "Poppins", sans-serif;
+}
+
+.form-style {
+  @apply rounded-lg bg-[#2C333F] p-3 text-[16px] leading-[24px] text-slate-50 shadow-[0_1px_0_0] shadow-white/50 focus:outline-none;
+}
+
+input[type="number"]::-webkit-inner-spin-button {
+  display: none;
+}
