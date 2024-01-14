@@ -79,7 +79,7 @@ function Home() {
                 <img
                   src={ele?.thumbnail}
                   alt=""
-                  className=" max-w-[280px] w-full min-h-[280px] h-full object-cover"
+                  className=" max-w-[280px] w-full min-h-[280px] h-full max-[340px]:min-h-[200px] object-cover"
                 />
               </div>
             ))}

@@ -16,6 +16,7 @@ import ProductSpecification from "../components/core/ProductDetails/ProuctSpecif
 import Footer from "../components/common/Footer";
 import ProductImageSlider from "../components/core/ProductDetails/ProductImageSlider";
 import ProductReviews from "../components/core/ProductDetails/ProductReviews";
+import AddressForm from "../components/common/AddressForm";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const ProductDetails = () => {
   const [productDetails, setProductDetails] = useState([]);
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [selectedImg, setSelectedImg] = useState("");
+  const [addressModal, setAddressModal] = useState(false);
 
   const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
@@ -90,8 +92,16 @@ const ProductDetails = () => {
       }
 
       if (user.accountType === ACCOUNT_TYPE.VISITOR) {
-        await createOrder([{productId:productId,quantity:1}], token, user, navigate, dispatch);
+        setAddressModal({
+          btn1Text: "Cancel",
+          btn2Text: "Buy",
+          btn1Handler: () => setAddressModal(false),
+          btn2Handler: async (addressData) =>
+            await buyProduct(addressData),
+        });
         return;
+
+        
       }
 
       setConfirmationModal({
@@ -106,6 +116,16 @@ const ProductDetails = () => {
       console.log("Error on HandelBuy Product", error);
     }
   };
+
+  const buyProduct = async(addressData,) => {
+    const { address, city, pincode, state, country } = addressData
+    const orderData = {
+      orderItems: [{productId:productId,quantity:1}],
+      address: `${address}, ${city}, ${pincode},${state}, ${country}`,
+    };
+    await createOrder(orderData, token, user, navigate, dispatch);
+    setAddressModal(false)
+  }
 
   return (
     <>
@@ -231,6 +251,7 @@ const ProductDetails = () => {
       {/* </div> */}
       <Footer />
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
+      {addressModal && <AddressForm modalData={addressModal} />}
     </>
   );
 };

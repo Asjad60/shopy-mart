@@ -25,7 +25,7 @@ const ImageSectionSlider = ({ products }) => {
             <SwiperSlide key={index}>
               <div className="flex justify-center flex-col md:flex-row  md:ml-0 gap-y-4 sm:gap-x-10 w-full p-2 md:p-6">
                 <div className="flex gap-4 flex-col items-center md:items-start justify-center md:w-2/5">
-                  <h1 className="text-4xl sm:text-5xl font-semibold">
+                  <h1 className="text-4xl sm:text-5xl font-semibold uppercase">
                     {product?.brand}{" "}
                   </h1>
                   <p className=" text-gray-600 md:w-3/5 text-center md:text-start">

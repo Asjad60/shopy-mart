@@ -43,7 +43,6 @@ function VerifyEmail() {
               renderInput={(props) => (
                 <input
                   {...props}
-                  placeholder="-"
                   style={{
                     boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                   }}
