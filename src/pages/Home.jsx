@@ -66,7 +66,7 @@ function Home() {
                 className="border border-[#2c333f] text-white rounded-sm w-full max-w-[500px]  h-full max-h-[500px]  p-4 flex flex-col items-center gap-4"
                 key={i}
               >
-                <p>{ele.productName}</p>
+                <p className="uppercase">{ele.productName}</p>
                 <h1 className="text-2xl font-medium min-[350px]:whitespace-nowrap">
                   Just Starting At <span className=" text-lg">₹</span>
                   {ele.price}

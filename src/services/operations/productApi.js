@@ -1,8 +1,9 @@
 import toast from "react-hot-toast";
 import { apiConnector } from "../apiconnector";
-import { categoryEndpoints, productEndpoints } from "../apis";
+import { categoryEndpoints, productEndpoints, reviewEndpoints } from "../apis";
 
 const { GET_CATEGORIES_API } = categoryEndpoints;
+const { CREATE_RATING_API } = reviewEndpoints;
 const {
   EDIT_PRODUCT_API,
   ADD_PRODUCT_API,
@@ -84,7 +85,6 @@ export const addProductDetails = async (data, token) => {
 };
 
 export const getSupplierProducts = async (token) => {
-
   let result = [];
   try {
     const response = await apiConnector("GET", GET_SUPPLIER_PRODUCTS, null, {
@@ -281,15 +281,36 @@ export const getSearchedProducts = async (key) => {
   try {
     const res = await apiConnector("POST", GET_SERCHED_PRODUCTS, { key });
 
-    if (!(res?.data?.success)) {
+    if (!res?.data?.success) {
       throw new Error(res?.data?.message);
     }
 
-    result = res?.data?.data
+    result = res?.data?.data;
   } catch (error) {
     console.log("GET_SERCHED_PRODUCTS ERROR ", error);
     toast.error("Not Found");
   }
 
   return result;
+};
+
+export const createRating = async (data, token) => {
+  const toastId = toast.loading("Loading...");
+  try {
+    const response = await apiConnector("POST", CREATE_RATING_API, data, {
+      Authorization: `Bearer ${token}`,
+    });
+
+    if(!response?.data?.success){
+      throw new Error(response?.data?.message)
+    }
+
+    toast.success("Review Added")
+
+  } catch (error) {
+    console.log("CREATE_RATING_API ERROR ", error);
+    toast.error(error.response.data.message);
+  }
+
+  toast.dismiss(toastId)
 };

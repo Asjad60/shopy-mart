@@ -41,7 +41,7 @@ const ProductDetails = () => {
     (async () => {
       try {
         const products = await getFullProductDetails(productId);
-        // console.log("productdetails ====> ", products);
+        console.log("productdetails ====> ", products);
         if (products) {
           setProductDetails(products);
         }
@@ -96,12 +96,9 @@ const ProductDetails = () => {
           btn1Text: "Cancel",
           btn2Text: "Buy",
           btn1Handler: () => setAddressModal(false),
-          btn2Handler: async (addressData) =>
-            await buyProduct(addressData),
+          btn2Handler: async (addressData) => await buyProduct(addressData),
         });
         return;
-
-        
       }
 
       setConfirmationModal({
@@ -117,15 +114,15 @@ const ProductDetails = () => {
     }
   };
 
-  const buyProduct = async(addressData,) => {
-    const { address, city, pincode, state, country } = addressData
+  const buyProduct = async (addressData) => {
+    const { address, city, pincode, state, country } = addressData;
     const orderData = {
-      orderItems: [{productId:productId,quantity:1}],
+      orderItems: [{ productId: productId, quantity: 1 }],
       address: `${address}, ${city}, ${pincode},${state}, ${country}`,
     };
     await createOrder(orderData, token, user, navigate, dispatch);
-    setAddressModal(false)
-  }
+    setAddressModal(false);
+  };
 
   return (
     <>
@@ -182,10 +179,10 @@ const ProductDetails = () => {
             onClick={handleAddToCart}
             disabled={productDetails?.stock === 0}
           >
-            {productDetails?.stock === 0 ? "NOTIFY ME" : "ADD TO CART" }
+            {productDetails?.stock === 0 ? "NOTIFY ME" : "ADD TO CART"}
           </button>
           <IconButton
-            text={productDetails?.stock === 0 ? "COMING SOON" : "BUY NOW" }
+            text={productDetails?.stock === 0 ? "COMING SOON" : "BUY NOW"}
             onclick={handleBuyProduct}
             customClasses={"w-full flex justify-center"}
             disabled={productDetails?.stock === 0}
@@ -196,7 +193,7 @@ const ProductDetails = () => {
         {/* =============== Product Details Section ==================*/}
         <div className="mx-auto text-white flex flex-col gap-4 max-w-[700px] w-full">
           <div className="flex flex-col ">
-            <p className="text-2xl">{productDetails?.productName}</p>
+            <p className="text-2xl uppercase">{productDetails?.productName}</p>
             <div className="flex gap-x-2 text-sm">
               <p>{avgReviewCount.toString()}</p>
               <RatingStars Review_Count={avgReviewCount} Star_Size={17} />
@@ -218,6 +215,20 @@ const ProductDetails = () => {
                 </div>
               ))}
             </div>
+          </div>
+
+          <div className="flex gap-x-20 mb-2">
+            <h2 className="font-medium text-gray-400">Brand</h2>
+            <p className={`uppercase`}>{productDetails?.brand}</p>
+          </div>
+
+          <div className="flex gap-[70px] mb-2">
+            <h2 className="font-medium text-gray-400">Colour</h2>
+            <p
+              className={`w-[30px] h-[30px] rounded-full `}
+              style={{ background: `${productDetails?.color}` }}
+              title={productDetails?.color?.toUpperCase()}
+            ></p>
           </div>
 
           <div className="flex gap-x-20 ">

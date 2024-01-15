@@ -9,18 +9,45 @@ const AddressForm = ({ modalData }) => {
     state: "",
     country: "",
   });
+  const [error, setError] = useState({
+    address: "",
+    city: "",
+    pincode: "",
+    state: "",
+    country: "",
+  });
 
   const handleSubmitForm = (e) => {
     e.preventDefault();
-    modalData?.btn2Handler(address);
 
-    setAddress({
-      address: "",
-      city: "",
-      pincode: "",
-      state: "",
-      country: "",
-    });
+    let hasError = false;
+    const newError = {};
+    for (const key in address) {
+      if (!address[key]) {
+        newError[key] =`Please Fill The ${key} Field`
+        hasError = true;
+      }
+    }
+
+    if (hasError) {
+      setError(newError)
+    }else{
+      modalData?.btn2Handler(address);
+      setAddress({
+        address: "",
+        city: "",
+        pincode: "",
+        state: "",
+        country: "",
+      });
+      setError({
+        address: "",
+        city: "",
+        pincode: "",
+        state: "",
+        country: "",
+      });
+    }
   };
 
   const handleChange = (e) => {
@@ -28,10 +55,15 @@ const AddressForm = ({ modalData }) => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
+
+    setError((prev) => ({
+      ...prev,
+      [e.target.name]: "",
+    }));
   };
 
   return (
-    <div className=" fixed inset-0 bg-[rgba(0,0,0,0.2)] flex items-center justify-center backdrop-blur-[2px] text-white">
+    <div className=" fixed inset-0 bg-[rgba(0,0,0,0.2)] grid place-items-center backdrop-blur-[3px] text-white overflow-auto">
       <div className="border border-slate-500 bg-slate-800 max-w-[500px] w-full p-4">
         <h1 className="font-medium text-3xl mb-4">Address</h1>
         <form onSubmit={handleSubmitForm} className="flex flex-col gap-5">
@@ -46,6 +78,7 @@ const AddressForm = ({ modalData }) => {
               onChange={handleChange}
               className=" resize-none form-style"
             ></textarea>
+            <span className="text-[12px] ml-1 text-red-500">{error.address}</span>
           </div>
           <div className="w-full flex gap-3">
             <div className="w-full">
@@ -59,6 +92,7 @@ const AddressForm = ({ modalData }) => {
                 onChange={handleChange}
                 className="form-style w-full"
               />
+              <span className="text-[12px] ml-1 text-red-500">{error.city}</span>
             </div>
             <div className="w-full">
               <label htmlFor="pincode">Pincode</label>
@@ -71,6 +105,7 @@ const AddressForm = ({ modalData }) => {
                 onChange={handleChange}
                 className="form-style w-full"
               />
+              <span className="text-[12px] ml-1 text-red-500">{error.pincode}</span>
             </div>
           </div>
           <div className="w-full flex gap-3">
@@ -85,6 +120,7 @@ const AddressForm = ({ modalData }) => {
                 onChange={handleChange}
                 className="form-style w-full"
               />
+              <span className="text-[12px] ml-1 text-red-500">{error.state}</span>
             </div>
             <div className="w-full">
               <label htmlFor="country">Country</label>
@@ -97,6 +133,7 @@ const AddressForm = ({ modalData }) => {
                 onChange={handleChange}
                 className="form-style w-full"
               />
+              <span className="text-[12px] ml-1 text-red-500">{error.country}</span>
             </div>
           </div>
 

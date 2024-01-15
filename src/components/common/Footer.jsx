@@ -16,7 +16,7 @@ function Footer() {
       className={`text-white w-full bg-cover bg-no-repeat bg-center mx-auto min-h-[25rem]`}
       style={{ backgroundImage: `url(${bgImage})` }}
     >
-      <div className=" bg-[rgba(0,0,0,0.6)] min-h-[25rem] mx-auto w-full flex flex-col items-center p-4 sm:p-8">
+      <div className=" bg-[rgba(0,0,0,0.6)] min-h-[25rem] mx-auto w-full flex flex-col items-center p-12">
         <div className="w-full flex flex-col sm:flex-row justify-center p-2 gap-6 max-w-maxContent border-b border-b-[#2c333f]">
           <div className="flex justify-between sm:justify-normal max-[445px]:flex-col max-[445px]:items-center sm:flex-col gap-4 sm:w-[50%]">
             <img
@@ -66,7 +66,7 @@ function Footer() {
             ))}
           </div>
 
-          <div>Made with ❤️ © 2023 CraftyCreation</div>
+          <div>Made with ❤️ © 2023 ShopyMart</div>
         </div>
       </div>
     </div>

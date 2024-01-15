@@ -20,6 +20,8 @@ const MyOrders = () => {
   };
   useEffect(() => {
     getMyOrders();
+
+    // eslint-disable-next-line
   }, []);
 
   console.log("myOrders  ==> ", myOrders);
@@ -74,10 +76,10 @@ const MyOrders = () => {
                     className="max-w-[100px] min-h-[100px] object-cover rounded-md"
                   />
                   <div>
-                    <p className="capitalize">{orders?.product?.productName}</p>
+                    <p className="uppercase">{orders?.product?.productName}</p>
                     <p className="text-gray-500 text-sm capitalize">
                       {orders?.product?.productDescription.length > 50
-                        ? orders?.product?.productDescription.slice(0, 50)
+                        ? orders?.product?.productDescription.slice(0, 50)+("...")
                         : orders?.product?.productDescription}
                     </p>
                   </div>

@@ -58,6 +58,7 @@ export const paymentEndpoints = {
 };
 
 export const reviewEndpoints = {
+  CREATE_RATING_API:BASE_URL + "/createRating",
   GET_REVIEW_API : BASE_URL + "/getAllRating"
 }
 

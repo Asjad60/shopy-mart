@@ -53,7 +53,7 @@ const RenderCartProducts = () => {
               className="w-24 sm:max-w-[150px] sm:w-full sm:min-h-[150px] sm:h-full object-cover rounded-md"
             />
             <div className="flex flex-col flex-1">
-              <p className="">{product?.productName}</p>
+              <p className={"uppercase"}>{product?.productName}</p>
               <p className="opacity-50">{product?.category?.name}</p>
               <div className="flex gap-x-2 items-center text-[11px]">
                 <span>{avgReviewCount[product._id] || 0}</span>

@@ -27,8 +27,10 @@ exports.createOrder = async (req, res) => {
 
           ProductModel.findByIdAndUpdate(
             orderItem.productId,
-            { $push: { buyer: userId } },
-            {$inc : {stock : -orderItem.quantity}},
+            { 
+              $push: { buyer: userId }, 
+              $inc: { stock: -orderItem.quantity } 
+            },
             { new: true }
           ),
         ]);
@@ -103,7 +105,7 @@ exports.cancelOrder = async (req, res) => {
         productId,
         {
           $pull: { buyer: userId },
-          $inc: {stock: existingOrder.quantity}
+          $inc: { stock: existingOrder.quantity },
         },
         { new: true }
       ),
@@ -166,7 +168,7 @@ exports.changeOrderStatus = async (req, res) => {
           updatedStatus.product,
           {
             $pull: { buyer: updatedStatus.customer },
-            $inc: {stock: updatedStatus.quantity}
+            $inc: { stock: updatedStatus.quantity },
           },
           { new: true }
         ).catch((error) => {

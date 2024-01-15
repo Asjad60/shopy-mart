@@ -28,7 +28,7 @@ const Product_Card = ({ product, Height = "", Width }) => {
               loading="lazy"
             />
           <div className=" overflow-hidden mt-1">
-            <p className="font-medium capitalize">
+            <p className="font-medium uppercase">
               {product?.productName.split(" ").length > 10
                 ? product?.productName.split(" ").slice(0, 10).join(" ")
                 : product?.productName}

@@ -305,7 +305,7 @@ const ProductInformationForm = () => {
             Choose a Colour
           </option>
           {ColorNames.map((color, index) => (
-            <option key={index} value={Object.keys(color)[0]}>
+            <option key={index} value={Object.keys(color)[0].toLowerCase()}>
               {Object.keys(color)[0]}
             </option>
           ))}

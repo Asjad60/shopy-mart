@@ -12,6 +12,7 @@ const ProductReviews = ({ ratingAndReviews, productId }) => {
   const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
   const [confirmationModal, setConfirmationModal] = useState(false);
+  const [ratingAndReviewModal, setRatingAndReviewModal] = useState(false);
   const [ratingCounts, setRatingCounts] = useState([]);
   const [avgRating, setAvgRating] = useState(0);
   const navigate = useNavigate();
@@ -30,6 +31,8 @@ const ProductReviews = ({ ratingAndReviews, productId }) => {
     }));
 
     setRatingCounts(rangeArr);
+
+    // eslint-disable-next-line
   }, [ratingAndReviews]);
 
   const handleSubmitRatingAndReview = async () => {
@@ -44,7 +47,7 @@ const ProductReviews = ({ ratingAndReviews, productId }) => {
       });
       return;
     }
-    if (ratingAndReviews.some((ele) => ele.user.includes(user._id))) {
+    if (ratingAndReviews.some((ele) => ele.user._id === user._id)) {
       setConfirmationModal({
         text1: "Already Reviewed",
         text2: "You Already Reviewed This Product",
@@ -55,6 +58,8 @@ const ProductReviews = ({ ratingAndReviews, productId }) => {
       });
       return;
     }
+
+    setRatingAndReviewModal(true);
   };
 
   return (
@@ -131,13 +136,19 @@ const ProductReviews = ({ ratingAndReviews, productId }) => {
                 </p>
                 <p className="text-sm">{ratingAndReview.review}</p>
                 <p className="text-gray-400 text-sm">
-                 Customer: {ratingAndReview.user.name}
+                  Customer: {ratingAndReview.user.name}
                 </p>
               </div>
             );
           })}
         </div>
       </div>
+      {ratingAndReviewModal && (
+        <RatingAndReviewModal
+          setRatingAndReviewModal={setRatingAndReviewModal}
+          productId={productId}
+        />
+      )}
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
     </>
   );
