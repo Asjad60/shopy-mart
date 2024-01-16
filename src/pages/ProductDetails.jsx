@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation, Link } from "react-router-dom";
 import { getFullProductDetails } from "../services/operations/productApi";
 import IconButton from "../components/common/IconButton";
 import { addToCart } from "../slices/cartSlice";
@@ -17,10 +17,12 @@ import Footer from "../components/common/Footer";
 import ProductImageSlider from "../components/core/ProductDetails/ProductImageSlider";
 import ProductReviews from "../components/core/ProductDetails/ProductReviews";
 import AddressForm from "../components/common/AddressForm";
+import { FaShare } from "react-icons/fa";
 
 const ProductDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { productId } = useParams();
   const [productDetails, setProductDetails] = useState([]);
   const [confirmationModal, setConfirmationModal] = useState(false);
@@ -41,7 +43,7 @@ const ProductDetails = () => {
     (async () => {
       try {
         const products = await getFullProductDetails(productId);
-        console.log("productdetails ====> ", products);
+        // console.log("productdetails ====> ", products);
         if (products) {
           setProductDetails(products);
         }
@@ -78,40 +80,36 @@ const ProductDetails = () => {
   };
 
   const handleBuyProduct = async () => {
-    try {
-      if (!token) {
-        setConfirmationModal({
-          text1: "You are not logged in!",
-          text2: "Please login to purchase the product.",
-          btn1Text: "Login",
-          btn2Text: "Cancel",
-          btn1Handler: () => navigate("/login"),
-          btn2Handler: () => setConfirmationModal(null),
-        });
-        return;
-      }
-
-      if (user.accountType === ACCOUNT_TYPE.VISITOR) {
-        setAddressModal({
-          btn1Text: "Cancel",
-          btn2Text: "Buy",
-          btn1Handler: () => setAddressModal(false),
-          btn2Handler: async (addressData) => await buyProduct(addressData),
-        });
-        return;
-      }
-
+    if (!token) {
       setConfirmationModal({
-        text1: "You are a Seller!",
-        text2: "You Cant Buy a Product.",
-        btn1Text: "Logout",
+        text1: "You are not logged in!",
+        text2: "Please login to purchase the product.",
+        btn1Text: "Login",
         btn2Text: "Cancel",
-        btn1Handler: () => dispatch(logout(navigate)),
+        btn1Handler: () => navigate("/login"),
         btn2Handler: () => setConfirmationModal(null),
       });
-    } catch (error) {
-      console.log("Error on HandelBuy Product", error);
+      return;
     }
+
+    if (user.accountType === ACCOUNT_TYPE.VISITOR) {
+      setAddressModal({
+        btn1Text: "Cancel",
+        btn2Text: "Buy",
+        btn1Handler: () => setAddressModal(false),
+        btn2Handler: async (addressData) => await buyProduct(addressData),
+      });
+      return;
+    }
+
+    setConfirmationModal({
+      text1: "You are a Seller!",
+      text2: "You Cant Buy a Product.",
+      btn1Text: "Logout",
+      btn2Text: "Cancel",
+      btn1Handler: () => dispatch(logout(navigate)),
+      btn2Handler: () => setConfirmationModal(null),
+    });
   };
 
   const buyProduct = async (addressData) => {
@@ -120,8 +118,20 @@ const ProductDetails = () => {
       orderItems: [{ productId: productId, quantity: 1 }],
       address: `${address}, ${city}, ${pincode},${state}, ${country}`,
     };
-    await createOrder(orderData, token, user, navigate, dispatch);
+    try {
+      await createOrder(orderData, token);
+    } catch (error) {
+      console.log("Error on createOrder Product", error);
+    }
+
     setAddressModal(false);
+  };
+
+  const handleWhatsAppShare = (e) => {
+    e.preventDefault();
+    const encodedLink = encodeURIComponent(window.location);
+    const whatsappUrl = `https://wa.me/?text=${encodedLink}`;
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -192,6 +202,25 @@ const ProductDetails = () => {
 
         {/* =============== Product Details Section ==================*/}
         <div className="mx-auto text-white flex flex-col gap-4 max-w-[700px] w-full">
+          <div className="flex justify-between w-full">
+            <div className="flex items-center gap-2 text-sm text-gray-400">
+              <Link to="/" className="hover:text-yellow-400">
+                Home
+              </Link>
+              <p className="text-xl">›</p>
+              <p className="capitalize">{location.pathname?.split("/").at(-2)}</p>
+              <p className="text-xl">›</p>
+              <p className="uppercase">
+                {productDetails?.productName?.split(" ").slice(0, 4).join(" ")}
+              </p>
+            </div>
+            <button
+              className="flex items-center gap-2 text-gray-400 hover:text-yellow-400"
+              onClick={handleWhatsAppShare}
+            >
+              <FaShare size={17} /> <p>Share</p>
+            </button>
+          </div>
           <div className="flex flex-col ">
             <p className="text-2xl uppercase">{productDetails?.productName}</p>
             <div className="flex gap-x-2 text-sm">

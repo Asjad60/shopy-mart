@@ -94,7 +94,7 @@ const ProductInformationForm = () => {
     if (editProduct) {
       if (currentFormUpdated()) {
         const currentValue = getValues();
-        console.log("consoling current vaalue =====> ", currentValue);
+        // console.log("consoling current vaalue =====> ", currentValue);
         const formData = new FormData();
 
         formData.append("productId", product._id);
@@ -180,7 +180,7 @@ const ProductInformationForm = () => {
       dispatch(setProduct(result));
     }
     setLoading(false);
-    console.log("consoling formData =====> ", formData);
+    // console.log("consoling formData =====> ", formData);
   };
 
   // const handleCategoryChange = useCallback(

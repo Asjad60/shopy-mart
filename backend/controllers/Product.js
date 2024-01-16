@@ -91,11 +91,11 @@ exports.addProducts = async (req, res) => {
     }
 
     const uploadImages = async (files) => {
-      const uploadFiles = files.filter(file => file)
+      const uploadFiles = files.filter((file) => file);
       const uploads = await Promise.all(
-        uploadFiles.map((file) =>{
+        uploadFiles.map((file) => {
           if (file) {
-          return  uploadFileToCloudinary(file, process.env.FOLDER_NAME)
+            return uploadFileToCloudinary(file, process.env.FOLDER_NAME);
           }
         })
       );
@@ -430,7 +430,7 @@ exports.deleteProducts = async (req, res) => {
     );
 
     await CategoriesModel.findByIdAndUpdate(
-      {_id: product.category},
+      { _id: product.category },
       { $pull: { products: productId } },
       { new: true }
     );
@@ -456,9 +456,17 @@ exports.getSearchedProduct = async (req, res) => {
     const { key } = req.body;
 
     const findProduct = await ProductModel.find({
-      $or: [{ productName: { $regex: key } }, { brand: { $regex: key } }],
+      $or: [
+        { productName: { $regex: key, $options: "i" } },
+        { brand: { $regex: key, $options: "i" } },
+      ],
     })
-      .select("thumbnail ratingAndReviews productName price")
+      .populate({
+        path: "category",
+        match: { name: { $regex: key, $options: "i" } }, 
+        select: "name",
+      })
+      .select("thumbnail ratingAndReviews productName price category")
       .populate("ratingAndReviews")
       .exec();
 

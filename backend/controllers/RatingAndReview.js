@@ -101,40 +101,6 @@ exports.getAverageRating = async (req, res) => {
   }
 };
 
-// exports.getProductRating = async (req, res) => {
-//   try {
-//     const { productId } = req.body;
-
-//     const product = await Product.findById(productId)
-//       .populate({
-//         path: "ratingAndReviews",
-//         poopulate: {
-//           path: "user",
-//           select: "name email image",
-//         },
-//       })
-//       .sort({ rating: "desc" });
-
-//     if (!product) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Product Not Found",
-//       });
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       data: product,
-//     });
-//   } catch (error) {
-//     console.log(error.message);
-//     return res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
-
 //============== ALLRatingAndReviews =============
 exports.getAllRating = async (req, res) => {
   try {

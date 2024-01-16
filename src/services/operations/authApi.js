@@ -15,7 +15,7 @@ export function sendOtp(email, navigate) {
         email,
         checkUserPresent: true,
       });
-      console.log("response from send otp api", response);
+      // console.log("response from send otp api", response);
 
       if (!response.data.success) {
         throw new Error(response.data.message);
@@ -43,7 +43,7 @@ export const signup = (name, email, password, accountType, otp, navigate) => {
         accountType,
         otp,
       });
-      console.log("response from signup api", response);
+      // console.log("response from signup api", response);
 
       if (!response.data.success) {
         throw new Error(response.data.message);
@@ -71,7 +71,7 @@ export function login(email, password, navigate) {
         password,
       });
 
-      console.log("LOGIN API RESPONSE............", response.data);
+      // console.log("LOGIN API RESPONSE............", response.data);
 
       if (!response.data.success) {
         throw new Error(response.data.message);
@@ -102,7 +102,7 @@ export const resetPassToken = (email, setEmailSent) => {
       const response = await apiConnector("POST", RESET_PASS_TOKEN, {
         email,
       });
-      console.log("reset pass token rsponsae====", response);
+      // console.log("reset pass token rsponsae====", response);
 
       if (!response.data.success) {
         throw new Error(response.data.success);

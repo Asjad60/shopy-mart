@@ -43,8 +43,6 @@ const ProfileInformation = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    console.log(formData.gender);
-    console.log(formData.name);
   };
 
   const { name, dateOfBirth, gender, contactNumber, about } = formData;

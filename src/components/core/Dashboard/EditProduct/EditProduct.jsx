@@ -16,7 +16,7 @@ const EditProduct = () => {
     const getProductDetails = async () => {
       setLoading(true);
       const response = await getFullProductDetails(productId, token);
-      console.log("consling from Edi product ===> ", response);
+      // console.log("consling from Edi product ===> ", response);
       if (response) {
         dispatch(setEditProduct(true));
         dispatch(setProduct(response));

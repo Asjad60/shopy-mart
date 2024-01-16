@@ -18,7 +18,6 @@ const ChipInput = ({
 
   useEffect(() => {
     if (editProduct) {
-      console.log("products Tags => ", product?.tags);
       // const fetchedChips = product?.tags[0].split(",");
       setChips(product?.tags);
     }
@@ -36,7 +35,7 @@ const ChipInput = ({
       if (chipValue && !chips.includes(chipValue)) {
         const newChips = [...chips, chipValue];
         setChips(newChips);
-        console.log("new chips", newChips);
+        // console.log("new chips", newChips);
         e.target.value = "";
       }
     }

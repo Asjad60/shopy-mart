@@ -20,14 +20,13 @@ function ReviewSlider() {
         "GET",
         reviewEndpoints.GET_REVIEW_API
       );
-      console.log("data ===> ", data);
+      // console.log("data ===> ", data);
       if (data?.success) {
         setReviews(data?.allReviews);
       }
     })();
   }, []);
 
-  console.log(reviews);
 
   return (
     <div className=" w-full">
@@ -60,7 +59,7 @@ function ReviewSlider() {
             return (
               <SwiperSlide key={i}>
                 <div className="flex flex-col bg-slate-900 max-w-[250px] min-h-[150px] h-full w-full  overflow-hidden  mr-4 p-3 text-[14px] text-slate-50">
-                  <p className="font-medium text-slate-50 text-sm">
+                  <p className=" text-slate-50 text-sm">
                     {review?.review.split(" ").length > truncateWords
                       ? `${review?.review
                           .split(" ")

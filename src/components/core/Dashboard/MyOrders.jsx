@@ -4,11 +4,14 @@ import { getMyEnrolledOrders } from "../../../services/operations/profileApi";
 import IconButton from "../../common/IconButton";
 import { formatDate } from "../../../services/formatedDate";
 import { cancelOrder } from "../../../services/operations/orderApi";
+import RatingAndReviewModal from "../../common/RatingAndReviewModal";
+
 
 const MyOrders = () => {
   const { token } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
   const [myOrders, setMyOrders] = useState(null);
+  const [ratingAndReviewModal, setRatingAndReviewModal] = useState(false);
 
   const getMyOrders = async () => {
     try {
@@ -24,14 +27,16 @@ const MyOrders = () => {
     // eslint-disable-next-line
   }, []);
 
-  console.log("myOrders  ==> ", myOrders);
+  // console.log("myOrders  ==> ", myOrders);
 
   const handleCancelOrder = async (orderId, productId) => {
     await cancelOrder({ orderId, productId }, token);
     getMyOrders();
   };
 
-  const handleAddReview = (productId) => {};
+  const handleAddReview = (productId) => {
+   setRatingAndReviewModal(productId)
+  };
 
   return (
     <div className="text-white">
@@ -100,6 +105,7 @@ const MyOrders = () => {
                   {orders?.status === "DELIVERED" && (
                     <IconButton
                       text="Add Review"
+                      type={"button"}
                       onclick={() => handleAddReview(orders?.product?._id)}
                       customClasses={"whitespace-nowrap"}
                     />
@@ -110,6 +116,7 @@ const MyOrders = () => {
           ))}
         </div>
       )}
+      {ratingAndReviewModal && <RatingAndReviewModal setRatingAndReviewModal={setRatingAndReviewModal} productId={ratingAndReviewModal}/>}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const createOrder = async (data, token) => {
       }
     );
 
-    console.log("response from create Order ==> ", response);
+    // console.log("response from create Order ==> ", response);
 
     if (!response?.data.success) {
       throw new Error(response?.data?.message);
@@ -42,7 +42,7 @@ export const cancelOrder = async (data, token) => {
         }
       );
   
-      console.log("response from CANCEL_ORDER_API ==> ",response)
+      // console.log("response from CANCEL_ORDER_API ==> ",response)
   
       if(!response?.data.success){
         throw new Error(response?.data?.message)

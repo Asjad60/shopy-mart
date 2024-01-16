@@ -72,7 +72,9 @@ const RatingAndReviewModal = ({ setRatingAndReviewModal ,productId}) => {
           </div>
 
           <div className="flex justify-between">
-            <button className="form-style">Cancel</button>
+            <button className="form-style" type="button" 
+            onClick={() => setRatingAndReviewModal(false)}
+            >Cancel</button>
             <IconButton type={"submit"} text={"Submit"} />
           </div>
         </form>

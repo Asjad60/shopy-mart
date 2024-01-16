@@ -20,7 +20,6 @@ const ChangeProfile = () => {
 
   const handleChange = (e) => {
     const file = e.target.files[0];
-    console.log(file);
 
     if (file) {
       setImageFile(file);
@@ -39,11 +38,10 @@ const ChangeProfile = () => {
 
   const handleFileUpload = () => {
     try {
-      console.log("Uploading...");
       setLoading(true);
       let formData = new FormData();
       formData.append("pic", imageFile);
-      console.log(formData);
+      // console.log(formData);
       dispatch(updateProfilePicture(token, formData)).then(() => {
         setLoading(false);
       });
@@ -55,7 +53,7 @@ const ChangeProfile = () => {
   useEffect(() => {
     if (imageFile) {
       previewFile(imageFile);
-      console.log(imageFile);
+      // console.log(imageFile);
     }
   }, [imageFile]);
 
