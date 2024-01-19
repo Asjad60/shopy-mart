@@ -75,7 +75,7 @@ const ProductInformationForm = () => {
       currentValues.price !== product.price ||
       currentValues.productTags.toString() !== product.tags.toString() ||
       currentValues.productImage !== product.thumbnail ||
-      currentValues.category._id !== product.category._id ||
+      currentValues.category !== product.category._id ||
       currentValues.specifications.toString() !==
         product.specifications.toString() ||
       currentValues.backImage !== product.backSideImage ||
@@ -92,6 +92,7 @@ const ProductInformationForm = () => {
   //handle next button
   const onSubmit = async (data) => {
     if (editProduct) {
+      // console.log("Has Form Changed:", currentFormUpdated())
       if (currentFormUpdated()) {
         const currentValue = getValues();
         // console.log("consoling current vaalue =====> ", currentValue);
@@ -110,7 +111,7 @@ const ProductInformationForm = () => {
         if (currentValue.productTags.toString() !== product.tags.toString()) {
           formData.append("tags", JSON.stringify(data.productTags));
         }
-        if (currentValue.category._id !== product.category._id) {
+        if (currentValue.category !== product.category._id) {
           formData.append("category", data.category);
         }
         if (
@@ -152,7 +153,7 @@ const ProductInformationForm = () => {
           dispatch(setProduct(result));
         }
       } else {
-        toast.error("NO Changes made");
+        toast.error("No Changes made");
       }
       return;
     }
@@ -310,9 +311,9 @@ const ProductInformationForm = () => {
             </option>
           ))}
         </select>
-        {errors.category && (
+        {errors.color && (
           <span className="ml-2 text-xs tracking-wide text-red-600">
-            Product Category is required
+            Product Colour is required
           </span>
         )}
       </div>

@@ -1,4 +1,5 @@
 const Category = require("../model/Category");
+const Product = require("../model/Product")
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
@@ -57,12 +58,20 @@ exports.getAllCategories = async (req, res) => {
 
 exports.categoryPageDetails = async (req, res) => {
   try {
-    const { categoryId } = req.body;
-    console.log("consoling CategoryId ===> ", categoryId);
+    const { categoryId, page = 1, pageSize = 10 } = req.body;
+
+    const totalProductsCount = await Product.countDocuments({
+      category: categoryId,
+      status: "Published",
+    });
 
     const selectedCategory = await Category.findById(categoryId)
       .populate({
         path: "products",
+        options:{
+          skip: (page - 1) * pageSize,
+          limit: pageSize,
+        },
         match: { status: "Published" },
         populate: "ratingAndReviews",
       })
@@ -74,6 +83,13 @@ exports.categoryPageDetails = async (req, res) => {
         success: false,
         message: "Data Not Found",
       });
+    }
+
+    const uniqueBrands = []
+ 
+    for(const item of selectedCategory.products){
+        if(uniqueBrands.includes(item.brand)) continue;
+        uniqueBrands.push(item.brand)
     }
 
     if (selectedCategory.products.length === 0) {
@@ -91,8 +107,7 @@ exports.categoryPageDetails = async (req, res) => {
     let differentCategory = await Category.findOne(
       categoriesExceptSelected[getRandomInt(categoriesExceptSelected.length)]
         ._id
-    )
-      .populate({
+    ).populate({
         path: "products",
         match: { status: "Published" },
         populate: {
@@ -100,28 +115,14 @@ exports.categoryPageDetails = async (req, res) => {
         },
       })
       .exec();
-
-    // TODO top Selling Products
-    const allCategories = await Category.find({})
-      .populate({
-        path: "products",
-        match: { status: "Published" },
-        populate: {
-          path: "ratingAndReviews",
-        },
-      })
-      .exec();
-    const allProducts = allCategories.flatMap((category) => category.products);
-    const mostSellingProducts = allProducts
-      .sort((a, b) => b.sold - a.sold)
-      .slice(0, 10);
 
     return res.status(200).json({
       success: true,
+      total:totalProductsCount,
       data: {
         selectedCategory,
         differentCategory,
-        mostSellingProducts,
+        brands:uniqueBrands,
       },
     });
   } catch (error) {

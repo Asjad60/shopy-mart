@@ -6,13 +6,19 @@ import { getCatalogPageData } from "../services/operations/pageAndComponentData"
 import ProductSlider from "../components/core/Catalog/ProductSlider";
 import ProductCard from "../components/core/Catalog/ProductCard";
 import Footer from "../components/common/Footer";
+import HighlightedText from "../components/common/HighlightedText";
+import FilterProductsSidebar from "../components/core/Catalog/FilterProductsSidebar";
 
 function Catalog() {
   const { catalogName } = useParams();
   const [catalogPageData, setCatalogPageData] = useState(null);
   const [active, setActive] = useState(1);
   const [categoryId, setCategoryId] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [selectedBrand, setSelectedBrand] = useState([]);
+  const [pages, setPages] = useState({
+    page: 1,
+    pageSize: 8,
+  });
 
   useEffect(() => {
     const getCategories = async () => {
@@ -35,9 +41,15 @@ function Catalog() {
   useEffect(() => {
     const getCategoryDetails = async () => {
       try {
-        const response = await getCatalogPageData(categoryId);
-        // console.log("getCategoryDetails ===> ", response);
+        const response = await getCatalogPageData(
+          categoryId,
+          pages.page,
+          pages.pageSize
+        );
+        console.log("getCategoryDetails ===> ", response);
         setCatalogPageData(response);
+
+        sortingProducts(1, response);
       } catch (error) {
         console.log("getCategoryDetails", error);
       }
@@ -45,9 +57,10 @@ function Catalog() {
     if (categoryId) {
       getCategoryDetails();
     }
-  }, [categoryId]);
+    // eslint-disable-next-line
+  }, [categoryId, pages.page, pages.pageSize]);
 
-  if (loading || !catalogPageData) {
+  if (!catalogPageData || !categoryId) {
     return (
       <div className="grid place-items-center min-h-screen min-w-full">
         <div className="spinner"></div>
@@ -55,87 +68,180 @@ function Catalog() {
     );
   }
 
+  function sortingProducts(sortingNum = 1, response) {
+    setActive(sortingNum);
+    const sortedProducts = [...response?.data?.selectedCategory?.products];
+    switch (sortingNum) {
+      case 1:
+        sortedProducts.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        break;
+      case 2:
+        sortedProducts.sort((a, b) => a.price - b.price);
+        break;
+      case 3:
+        sortedProducts.sort((a, b) => b.price - a.price);
+        break;
+      default:
+        break;
+    }
+
+    setCatalogPageData((prevData) => ({
+      ...prevData,
+      data: {
+        ...prevData?.data,
+        selectedCategory: {
+          ...prevData?.data?.selectedCategory,
+          products: sortedProducts,
+        },
+      },
+    }));
+  }
+
+  const filteredProducts =
+    selectedBrand.length > 0
+      ? catalogPageData?.data?.selectedCategory?.products.filter((product) => selectedBrand?.includes(product.brand))
+      : catalogPageData?.data?.selectedCategory?.products;
+
+  const totalPages = Math.ceil(catalogPageData?.total / pages.pageSize) || 1;
+
   return (
-    <div className=" text-white">
-      <div className=" mx-auto bg-[#161d29] min-h-[240px] rounded-md w-full">
-        <div className="mx-auto  px-4 py-20 w-full max-w-maxContentTab lg:max-w-maxContent">
-          <p className="text-slate-400 text-sm mb-4">
-            Home / Catalog /
-            <span className="text-yellow-400 capitalize">
+    <div className="text-white flex relative">
+      <FilterProductsSidebar
+        brands={catalogPageData?.data?.brands}
+        setSelectedBrand={setSelectedBrand}
+        selectedBrand={selectedBrand}
+      />
+      <div className="h-[calc(100vh-57px)] flex-1 overflow-auto">
+        <div className=" mx-auto bg-[#161d29] min-h-[240px] rounded-ee-md w-full">
+          <div className="mx-auto  px-4 py-20 w-full max-w-maxContentTab lg:max-w-maxContent">
+            <p className="text-slate-400 text-sm mb-4">
+              Home / Catalog /{" "}
+              <span className="text-yellow-400 capitalize">
+                {catalogName.split("-").join(" ")}
+              </span>
+            </p>
+            <p className="text-3xl font-medium capitalize">
+              {" "}
               {catalogName.split("-").join(" ")}
-            </span>
-          </p>
-          <p className="text-3xl font-medium capitalize">
-            {" "}
-            {catalogName.split("-").join(" ")}
-          </p>
-        </div>
-      </div>
-
-      <div>
-        {/* section 1  */}
-        <div className=" mx-auto  px-4 py-12 w-full max-w-maxContentTab lg:max-w-maxContent">
-          <p className="text-3xl font-medium md:text-4xl">
-            Products to get you Started
-          </p>
-          <div className="flex gap-x-5 border-b border-b-[#2C333F] cursor-pointer">
-            <p
-              className={`py-2 ${
-                active === 1
-                  ? "border-b border-b-yellow-400 text-yellow-400"
-                  : ""
-              }`}
-              onClick={() => setActive(1)}
-            >
-              Most Popular
-            </p>
-            <p
-              className={`py-2 ${
-                active === 2
-                  ? "border-b border-b-yellow-400 text-yellow-400"
-                  : ""
-              }`}
-              onClick={() => setActive(2)}
-            >
-              New
             </p>
           </div>
-          <div className="py-4 w-full">
-            <ProductSlider
-              products={catalogPageData?.data?.selectedCategory?.products}
-            />
-          </div>
         </div>
 
-        {/* section2 */}
-        <div className=" mx-auto  px-4 py-12 w-full max-w-maxContentTab lg:max-w-maxContent">
-          <p className="text-3xl font-medium md:text-4xl mb-4">
-            Top Products in {catalogPageData?.data?.differentCategory?.name}
-          </p>
-          <div className="py-8 border-t border-[#2C333F] w-full">
-            <ProductSlider
-              products={catalogPageData?.data?.differentCategory?.products}
-            />
-          </div>
-        </div>
+        <div>
+          {/* section 1  */}
+          <div className=" mx-auto  px-4 py-12 w-full max-w-maxContentTab lg:max-w-maxContent">
+            <div className="text-3xl font-medium md:text-4xl mb-4">
+              <HighlightedText text={"Products to get you Started"} />
+            </div>
+            <div className="flex gap-x-5 border-b border-b-[#2C333F] cursor-pointer">
+              <p className={`py-2 ${active === 1
+                    ? "border-b border-b-yellow-400 text-yellow-400" : ""
+                }`}
+                onClick={() => sortingProducts(1, catalogPageData)}
+              >
+                Newest First
+              </p>
+              <p className={`py-2 ${ active === 2
+                    ? "border-b border-b-yellow-400 text-yellow-400" : ""
+                }`}
+                onClick={() => sortingProducts(2, catalogPageData)}
+              >
+                Price -- Low to High
+              </p>
+              <p className={`py-2 ${ active === 3
+                    ? "border-b border-b-yellow-400 text-yellow-400" : ""
+                }`}
+                onClick={() => sortingProducts(3, catalogPageData)}
+              >
+                Price -- High to Low
+              </p>
+            </div>
+            <div className="py-4">
+              <div className="grid max-[445px]:place-items-center grid-cols-1 min-[445px]:grid-cols-2 min-[865px]:grid-cols-3 min-[1095px]:grid-cols-4 gap-y-5">
+                {filteredProducts?.map(
+                  (product, index) => (
+                    <ProductCard product={product} key={index} />
+                  )
+                )}
+              </div>
+            </div>
 
-        {/* section 3 */}
-        <div className="mx-auto  px-4 py-12 w-full max-w-maxContentTab lg:max-w-maxContent">
-          <p className="text-3xl lg:text-4xl font-medium  ">
-            Frequently Bought
-          </p>
-          <div className="py-8">
-            <div className="grid max-[640px]:place-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {catalogPageData?.data?.mostSellingProducts
-                .slice(0, 8)
-                .map((product, index) => (
-                  <ProductCard product={product} key={index} />
-                ))}
+            {/* pagination */}
+            <div className="bg-[#161d29] py-6 px-3 flex flex-col sm:flex-row justify-between gap-3 items-center mt-10">
+              <span className="whitespace-nowrap">
+                Page {pages.page} of {totalPages}
+              </span>
+
+              <div className="flex justify-center sm:justify-between w-2/4 text-sm">
+                {pages.page > 1 && (
+                  <button
+                    onClick={() => {
+                      setPages((prevPages) => ({
+                        ...prevPages,
+                        page: prevPages.page - 1,
+                      }));
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="text-yellow-400"
+                  >
+                    PREVIOUS
+                  </button>
+                )}
+                <div className=" overflow-hidden max-w-[400px]">
+                  {Array(totalPages)
+                    .fill(null)
+                    .map((_, i) => (
+                      <button
+                        key={i}
+                        className={`rounded-full px-2 ${
+                          pages.page === i + 1 && "bg-yellow-400 text-black"
+                        }`}
+                        onClick={() => {
+                          setPages((prevPages) => ({
+                            ...prevPages,
+                            page: i + 1,
+                          }));
+                          window.scrollTo({ top: 0, behavior: "smooth" });
+                        }}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+                </div>
+                {pages.page < totalPages && (
+                  <button
+                    onClick={() => {
+                      setPages((prevPages) => ({
+                        ...prevPages,
+                        page: prevPages.page + 1,
+                      }));
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="text-yellow-400"
+                  >
+                    NEXT
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* section2 */}
+          <div className=" mx-auto  px-4 py-12 w-full max-w-maxContentTab lg:max-w-maxContent">
+            <HighlightedText
+              text={`Top Products in ${catalogPageData?.data?.differentCategory?.name}`}
+            />
+            <div className="py-8 border-t border-[#2C333F] w-full mt-4">
+              <ProductSlider
+                products={catalogPageData?.data?.differentCategory?.products}
+              />
             </div>
           </div>
         </div>
+        <Footer />
       </div>
-      <Footer />
     </div>
   );
 }

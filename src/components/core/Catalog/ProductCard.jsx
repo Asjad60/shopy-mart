@@ -24,13 +24,13 @@ const Product_Card = ({ product, Height = "", Width }) => {
               alt={product?.name}
               className={`h-[200px] ${
                 Width ? Width : "w-full"
-              } rounded-xl object-cover group-hover:scale-95 transition-all `}
+              } rounded-lg object-cover group-hover:scale-95 transition-all `}
               loading="lazy"
             />
           <div className=" overflow-hidden mt-1">
             <p className="font-medium uppercase">
-              {product?.productName.split(" ").length > 10
-                ? product?.productName.split(" ").slice(0, 10).join(" ")
+              {product?.productName.split(" ").length > 5
+                ? product?.productName.split(" ").slice(0, 5).join(" ")
                 : product?.productName}
             </p>
             <div className="flex gap-x-2 text-sm">

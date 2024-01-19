@@ -61,7 +61,7 @@ const SupplierChart = ({ products }) => {
         </button>
       </div>
 
-      <div className="relative mx-auto aspect-square h-full w-full">
+      <div className="mx-auto h-full w-full ">
         <Pie
           data={
             chartData === "buyers" ? chartDataForBuyers : chartDataForIncome
