@@ -14,7 +14,11 @@ function Catalog() {
   const [catalogPageData, setCatalogPageData] = useState(null);
   const [active, setActive] = useState(1);
   const [categoryId, setCategoryId] = useState("");
-  const [selectedBrand, setSelectedBrand] = useState([]);
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [minAndMaxPrice, setMinAndMaxPrice] = useState({
+    min: 0,
+    max: 0,
+  });
   const [pages, setPages] = useState({
     page: 1,
     pageSize: 8,
@@ -46,7 +50,7 @@ function Catalog() {
           pages.page,
           pages.pageSize
         );
-        console.log("getCategoryDetails ===> ", response);
+        // console.log("getCategoryDetails ===> ", response);
         setCatalogPageData(response);
 
         sortingProducts(1, response);
@@ -100,18 +104,27 @@ function Catalog() {
   }
 
   const filteredProducts =
-    selectedBrand.length > 0
-      ? catalogPageData?.data?.selectedCategory?.products.filter((product) => selectedBrand?.includes(product.brand))
-      : catalogPageData?.data?.selectedCategory?.products;
+    catalogPageData?.data?.selectedCategory?.products.filter(
+      (product) =>
+        (selectedFilters.length === 0 ||
+          selectedFilters.includes(product.brand)) &&
+        (minAndMaxPrice.min === "" ||
+          product.price >= parseInt(minAndMaxPrice.min)) &&
+        (minAndMaxPrice.max === "" ||
+          product.price <= parseInt(minAndMaxPrice.max))
+    );
 
   const totalPages = Math.ceil(catalogPageData?.total / pages.pageSize) || 1;
 
   return (
     <div className="text-white flex relative">
       <FilterProductsSidebar
+        products={catalogPageData?.data?.selectedCategory?.products}
         brands={catalogPageData?.data?.brands}
-        setSelectedBrand={setSelectedBrand}
-        selectedBrand={selectedBrand}
+        setSelectedFilters={setSelectedFilters}
+        selectedFilters={selectedFilters}
+        minAndMaxPrice={minAndMaxPrice}
+        setMinAndMaxPrice={setMinAndMaxPrice}
       />
       <div className="h-[calc(100vh-57px)] flex-1 overflow-auto">
         <div className=" mx-auto bg-[#161d29] min-h-[240px] rounded-ee-md w-full">
@@ -136,22 +149,31 @@ function Catalog() {
               <HighlightedText text={"Products to get you Started"} />
             </div>
             <div className="flex gap-x-5 border-b border-b-[#2C333F] cursor-pointer">
-              <p className={`py-2 ${active === 1
-                    ? "border-b border-b-yellow-400 text-yellow-400" : ""
+              <p
+                className={`py-2 ${
+                  active === 1
+                    ? "border-b border-b-yellow-400 text-yellow-400"
+                    : ""
                 }`}
                 onClick={() => sortingProducts(1, catalogPageData)}
               >
                 Newest First
               </p>
-              <p className={`py-2 ${ active === 2
-                    ? "border-b border-b-yellow-400 text-yellow-400" : ""
+              <p
+                className={`py-2 ${
+                  active === 2
+                    ? "border-b border-b-yellow-400 text-yellow-400"
+                    : ""
                 }`}
                 onClick={() => sortingProducts(2, catalogPageData)}
               >
                 Price -- Low to High
               </p>
-              <p className={`py-2 ${ active === 3
-                    ? "border-b border-b-yellow-400 text-yellow-400" : ""
+              <p
+                className={`py-2 ${
+                  active === 3
+                    ? "border-b border-b-yellow-400 text-yellow-400"
+                    : ""
                 }`}
                 onClick={() => sortingProducts(3, catalogPageData)}
               >
@@ -160,16 +182,18 @@ function Catalog() {
             </div>
             <div className="py-4">
               <div className="grid max-[445px]:place-items-center grid-cols-1 min-[445px]:grid-cols-2 min-[865px]:grid-cols-3 min-[1095px]:grid-cols-4 gap-y-5">
-                {filteredProducts?.map(
-                  (product, index) => (
+                {filteredProducts.length > 0 ? (
+                  filteredProducts?.map((product, index) => (
                     <ProductCard product={product} key={index} />
-                  )
+                  ))
+                ) : (
+                  <h2 className="text-2xl font-medium text-yellow-400">Not Found</h2>
                 )}
               </div>
             </div>
 
             {/* pagination */}
-            <div className="bg-[#161d29] py-6 px-3 flex flex-col sm:flex-row justify-between gap-3 items-center mt-10">
+            <div className="border border-[#2c333f] py-6 px-3 flex flex-col sm:flex-row justify-between gap-3 items-center mt-10">
               <span className="whitespace-nowrap">
                 Page {pages.page} of {totalPages}
               </span>
