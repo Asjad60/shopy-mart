@@ -91,7 +91,7 @@ const MyOrders = () => {
                 </div>
 
                 <div className="flex min-[450px]:flex-col">
-                  {orders?.status !== "DELIVERED" && (
+                  {(orders?.status !== "DELIVERED" || orders?.status !== "CANCELLED") && (
                     <button
                       className="bg-[#2c333f] border-b border-b-slate-500 rounded-md  py-2 px-9"
                       onClick={() =>

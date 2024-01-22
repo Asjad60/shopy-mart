@@ -11,6 +11,7 @@ const initialState = {
   totalItems: localStorage.getItem("totalItems")
     ? JSON.parse(localStorage.getItem("totalItems"))
     : 0,
+  selectedSize: ""
 };
 
 const cartSlice = createSlice({
@@ -21,7 +22,8 @@ const cartSlice = createSlice({
       const product = action.payload;
       const findProduct = state.cart.find((item) => item._id === product._id);
       if (findProduct) {
-        if (findProduct.stock === findProduct.quantity) return;
+        const selectedSizeStock = findProduct.sizes.find(ele => ele.size === state.selectedSize);
+        if (findProduct.stock === findProduct.quantity || (findProduct.sizes && selectedSizeStock && selectedSizeStock.stock === findProduct.quantity)) return;        
         findProduct.quantity++;
         state.total += product?.price;
         localStorage.setItem("cart", JSON.stringify(state.cart));
@@ -70,6 +72,11 @@ const cartSlice = createSlice({
       }
     },
 
+    setSelectedSize(state,action){
+      state.selectedSize = action.payload 
+      localStorage.setItem("size",JSON.stringify(state.selectedSize))
+    },
+
     resetCart(state) {
       state.cart = [];
       state.total = 0;
@@ -82,6 +89,6 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, removeFromCart, resetCart, updateQuantity } =
+export const { addToCart, removeFromCart, resetCart,setSelectedSize, updateQuantity } =
   cartSlice.actions;
 export default cartSlice.reducer;

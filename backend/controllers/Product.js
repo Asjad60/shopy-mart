@@ -34,6 +34,7 @@ exports.addProducts = async (req, res) => {
       tags: _tag,
       category,
       specifications: _specifications,
+      sizes: _sizes,
       productDescription,
       brand,
       stock,
@@ -43,6 +44,7 @@ exports.addProducts = async (req, res) => {
 
     const tags = JSON.parse(_tag);
     const specifications = JSON.parse(_specifications);
+    const sizes = _sizes ? JSON.parse(_sizes) : [];
 
     if (
       !productName ||
@@ -52,7 +54,6 @@ exports.addProducts = async (req, res) => {
       !productDescription ||
       !tags.length ||
       !brand ||
-      !stock ||
       !color
     ) {
       return res.status(400).json({
@@ -120,6 +121,7 @@ exports.addProducts = async (req, res) => {
       brand,
       stock,
       color,
+      sizes: sizes,
       status,
       thumbnail: uploadedThumbnail,
       backSideImage: uploadedBackImage,
@@ -311,7 +313,7 @@ exports.editProduct = async (req, res) => {
     // Update only the fields that are present in the request body
     for (const key in updates) {
       if (updates.hasOwnProperty(key)) {
-        if (key === "tags" || key === "specifications") {
+        if (key === "tags" || key === "specifications" || key === "sizes") {
           product[key] = JSON.parse(updates[key]);
         } else {
           product[key] = updates[key];
@@ -463,7 +465,7 @@ exports.getSearchedProduct = async (req, res) => {
     })
       .populate({
         path: "category",
-        match: { name: { $regex: key, $options: "i" } }, 
+        match: { name: { $regex: key, $options: "i" } },
         select: "name",
       })
       .select("thumbnail ratingAndReviews productName price category")

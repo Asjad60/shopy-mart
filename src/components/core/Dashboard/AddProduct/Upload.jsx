@@ -21,10 +21,12 @@ const Upload = ({
       setHideShowImage(true);
     }
     register(name, { required: req });
+    // eslint-disable-next-line
   }, [register]);
 
   useEffect(() => {
     setValue(name, images);
+    // eslint-disable-next-line
   }, [images, setValue]);
 
   const handleChangeImage = useCallback(
@@ -36,6 +38,7 @@ const Upload = ({
         setHideShowImage(true);
       }
     },
+    // eslint-disable-next-line
     [images]
   );
 
@@ -70,13 +73,13 @@ const Upload = ({
           </label>
         ) : (
           <div
-            className=" w-full  rounded-lg object-cover flex flex-col p-4"
+            className=" w-full rounded-lg object-cover flex flex-col p-4"
             // className=" w-full rounded-lg flex flex-col gap-2 justify-center items-center"
           >
             <img
               src={previewImage}
               alt="Thumbnail"
-              className=" h-full rounded-lg w-full object-cover aspect-square"
+              className="max-h-[265px] h-full rounded-lg max-w-[265px] w-full object-cover aspect-square mx-auto"
             />
             <button
               className="text-white py-1 my-2 px-3 bg-[#161d29] rounded-md"

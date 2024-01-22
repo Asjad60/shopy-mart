@@ -6,16 +6,26 @@ import { resetCart } from "../../../../slices/cartSlice";
 import AddressForm from "../../../common/AddressForm";
 
 const RenderTotalAmount = () => {
-  const { total, cart } = useSelector((state) => state.cart);
+  const { total, cart,selectedSize } = useSelector((state) => state.cart);
   const { token } = useSelector((state) => state.auth);
   const [addressModal, setAddressModal] = useState(false);
   const dispatch = useDispatch();
 
   const handleBuyProduct = () => {
-    const products = cart.map((product) => ({
-      productId: product._id,
-      quantity: product.quantity || 1,
-    }));
+    const products = cart.map((product) => {
+       if(product.category.name === "Clothing" || product.category.name === "Footwear"){
+        return {
+          productId: product._id,
+          quantity: product.quantity || 1,
+          size:selectedSize
+        }
+       }else{
+        return {
+          productId: product._id,
+          quantity: product.quantity || 1,
+        }
+       }
+    });
 
     setAddressModal({
       btn1Text: "Cancel",
@@ -29,7 +39,7 @@ const RenderTotalAmount = () => {
   const buyProducts = async (addressData, products) => {
     const { address, city, pincode, state, country } = addressData;
     const orderData = {
-      orderItems: products,
+      orderItems:products, 
       address: `${address}, ${city}, ${pincode},${state}, ${country}`,
     };
 

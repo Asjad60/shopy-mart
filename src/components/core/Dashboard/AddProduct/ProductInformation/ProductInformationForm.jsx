@@ -15,7 +15,8 @@ import { toast } from "react-hot-toast";
 import { editProductDetails } from "../../../../../services/operations/productApi";
 import { addProductDetails } from "../../../../../services/operations/productApi";
 import { PRODUCT_STATUS } from "../../../../../utils/constants";
-import ColorNames from "../../../../../data/color-names.json"
+import ColorNames from "../../../../../data/color-names.json";
+import SizeDropdown from "./SizeDropdown/SizeDropdown";
 
 const ProductInformationForm = () => {
   const {
@@ -30,14 +31,13 @@ const ProductInformationForm = () => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const [productCategory, setProductCategory] = useState([]);
-  // const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const { product, editProduct } = useSelector((state) => state.product);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const categories = await getCategories();
-
         if (categories.length > 0) {
           setProductCategory(categories);
 
@@ -55,6 +55,9 @@ const ProductInformationForm = () => {
             setValue("brand", product.brand);
             setValue("stock", product.stock);
             setValue("color", product.color);
+            setValue("sizes", product.sizes);
+
+            handleCategoryChange(product.category._id,categories)
           }
         }
       } catch (error) {
@@ -83,7 +86,8 @@ const ProductInformationForm = () => {
       currentValues.side2 !== product.sideImage2 ||
       currentValues.brand !== product.brand ||
       currentValues.stock !== product.stock ||
-      currentValues.color !== product.color 
+      currentValues.color !== product.color ||
+      JSON.stringify(currentValues.sizes) !== JSON.stringify(product.sizes) 
     ) {
       return true;
     } else return false;
@@ -144,6 +148,9 @@ const ProductInformationForm = () => {
         if (currentValue.color !== product.color) {
           formData.append("color", data.color);
         }
+        if (JSON.stringify(currentValue.sizes) !== JSON.stringify(product.sizes) ) {
+          formData.append("sizes", JSON.stringify(data.sizes));
+        }
 
         setLoading(true);
         const result = await editProductDetails(formData, token);
@@ -173,6 +180,9 @@ const ProductInformationForm = () => {
     formData.append("stock", data.stock);
     formData.append("color", data.color);
     formData.append("status", PRODUCT_STATUS.DRAFT);
+    if (selectedCategory === "Clothing" || selectedCategory === "Footwear") {
+      formData.append("sizes", JSON.stringify(data.sizes))
+    }
 
     setLoading(true);
     const result = await addProductDetails(formData, token);
@@ -181,26 +191,20 @@ const ProductInformationForm = () => {
       dispatch(setProduct(result));
     }
     setLoading(false);
-    // console.log("consoling formData =====> ", formData);
   };
 
-  // const handleCategoryChange = useCallback(
-  //   (e) => {
-  //     const selectedCategoryId = e.target.value;
-  //     const selectedCategories = productCategory.find(
-  //       (category) => category._id === selectedCategoryId
-  //     );
-
-  //     console.log("selectedCategories ===> ", selectedCategories);
-  //     setSelectedCategory(selectedCategories?.name || "Product Details");
-  //   },
-  //   //eslint-disable-next-line
-  //   [productCategory]
-  // );
+  function handleCategoryChange(value ,categories){
+    // console.log("values ==> ",value)
+    const selectedCategories = categories.find(
+      (category) => category._id === value
+    );
+    // console.log("selectedCategories ===> ", selectedCategories);
+    setSelectedCategory(selectedCategories?.name);
+  };
 
   return (
     <form
-      className="flex flex-col gap-5 p-6 bg-[#161d29] rounded-md"
+      className="flex flex-col gap-5 p-6 select-none bg-[#161d29] rounded-md"
       onSubmit={handleSubmit(onSubmit)}
     >
       <div className="flex flex-col gap-y-1">
@@ -256,7 +260,7 @@ const ProductInformationForm = () => {
             <HiOutlineCurrencyRupee />
           </span>
         </div>
-        {errors.productPrice && (
+        {errors.price && (
           <span className="ml-2 text-xs tracking-wide text-red-600">
             Product Price is required
           </span>
@@ -272,8 +276,7 @@ const ProductInformationForm = () => {
           id="category"
           {...register("category", { required: true })}
           className="bg-[#2C333F] outline-none p-3 rounded-md border-b border-b-slate-300"
-          defaultValue=""
-          // onChange={handleCategoryChange}
+          onChange={(e) => handleCategoryChange(e.target.value,productCategory)}
         >
           <option value="" disabled>
             Choose a Category
@@ -291,9 +294,20 @@ const ProductInformationForm = () => {
         )}
       </div>
 
+      {(selectedCategory === "Clothing" || selectedCategory === "Footwear") && (
+        <SizeDropdown
+          categoryName={selectedCategory}
+          label={"Select Size"}
+          name={"sizes"}
+          register={register}
+          setValue={setValue}
+          errors={errors}
+        />
+      )}
+
       <div className="flex flex-col gap-y-1">
         <label htmlFor="color">
-         Colour <sup className="text-red-500">*</sup>
+          Colour <sup className="text-red-500">*</sup>
         </label>
         <select
           name="color"
@@ -347,59 +361,63 @@ const ProductInformationForm = () => {
         )}
       </div>
 
-      <div className="flex flex-col gap-y-1">
-        <label htmlFor="stock">
-          Stock <sup className="text-red-500 ">*</sup>
-        </label>
-        <input
-          type="number"
-          placeholder="Enter Product Stock"
-          id="stock"
-          name="stock"
-          {...register("stock", { required: true })}
-          className="bg-[#2C333F] outline-none p-3 rounded-md border-b border-b-slate-300"
-        />
-        {errors.stock && (
-          <span className="ml-2 text-xs tracking-wide text-red-600">
-           Product Stock is required
-          </span>
-        )}
-      </div>
+      {(selectedCategory !== "Clothing" && selectedCategory !== "Footwear") && (
+        <div className="flex flex-col gap-y-1">
+          <label htmlFor="stock">
+            Stock <sup className="text-red-500 ">*</sup>
+          </label>
+          <input
+            type="number"
+            placeholder="Enter Product Stock"
+            id="stock"
+            name="stock"
+            {...register("stock", { required: true })}
+            className="bg-[#2C333F] outline-none p-3 rounded-md border-b border-b-slate-300"
+          />
+          {errors.stock && (
+            <span className="ml-2 text-xs tracking-wide text-red-600">
+              Product Stock is required
+            </span>
+          )}
+        </div>
+      )}
 
-      <Upload
-        label="Thumbnail | Front Image"
-        name="productImage"
-        register={register}
-        setValue={setValue}
-        errors={errors}
-        editData={editProduct ? product?.thumbnail : null}
-        req={true}
-      />
-      <Upload
-        label="Back Image"
-        name="backImage"
-        register={register}
-        setValue={setValue}
-        errors={errors}
-        editData={editProduct ? product?.backSideImage : null}
-        req={true}
-      />
-      <Upload
-        label="Side-1"
-        name="side1"
-        register={register}
-        setValue={setValue}
-        editData={editProduct ? product?.sideImage1 : null}
-        req={false}
-      />
-      <Upload
-        label="Side-2"
-        name="side2"
-        register={register}
-        setValue={setValue}
-        editData={editProduct ? product?.sideImage2 : null}
-        req={false}
-      />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <Upload
+          label="Thumbnail | Front Image"
+          name="productImage"
+          register={register}
+          setValue={setValue}
+          errors={errors}
+          editData={editProduct ? product?.thumbnail : null}
+          req={true}
+        />
+        <Upload
+          label="Back Image"
+          name="backImage"
+          register={register}
+          setValue={setValue}
+          errors={errors}
+          editData={editProduct ? product?.backSideImage : null}
+          req={true}
+        />
+        <Upload
+          label="Side-1"
+          name="side1"
+          register={register}
+          setValue={setValue}
+          editData={editProduct ? product?.sideImage1 : null}
+          req={false}
+        />
+        <Upload
+          label="Side-2"
+          name="side2"
+          register={register}
+          setValue={setValue}
+          editData={editProduct ? product?.sideImage2 : null}
+          req={false}
+        />
+      </div>
 
       <Specification
         label={"Highlights"}

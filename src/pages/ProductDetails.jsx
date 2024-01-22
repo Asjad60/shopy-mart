@@ -6,7 +6,7 @@ import { addToCart } from "../slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ConfirmationModal from "../components/common/ConfirmationModal";
 import { ACCOUNT_TYPE } from "../utils/constants";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 // import { buyProduct } from "../services/operations/paymentApi";
 import { createOrder } from "../services/operations/orderApi";
 import { logout } from "../services/operations/authApi";
@@ -17,6 +17,7 @@ import Footer from "../components/common/Footer";
 import ProductImageSlider from "../components/core/ProductDetails/ProductImageSlider";
 import ProductReviews from "../components/core/ProductDetails/ProductReviews";
 import AddressForm from "../components/common/AddressForm";
+import { setSelectedSize } from "../slices/cartSlice";
 import { FaShare } from "react-icons/fa";
 
 const ProductDetails = () => {
@@ -28,7 +29,10 @@ const ProductDetails = () => {
   const [confirmationModal, setConfirmationModal] = useState(false);
   const [selectedImg, setSelectedImg] = useState("");
   const [addressModal, setAddressModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+
+  const { selectedSize } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
 
@@ -42,13 +46,17 @@ const ProductDetails = () => {
   useEffect(() => {
     (async () => {
       try {
+        setLoading(true)
         const products = await getFullProductDetails(productId);
         // console.log("productdetails ====> ", products);
         if (products) {
           setProductDetails(products);
         }
+        setLoading(false)
       } catch (error) {
         console.log("Can't get Product Details");
+      }finally{
+        setLoading(false)
       }
     })();
   }, [productId]);
@@ -71,6 +79,15 @@ const ProductDetails = () => {
       return;
     }
 
+    if (
+      !selectedSize &&
+      (productDetails?.category?.name === "Clothing" ||
+        productDetails?.category?.name === "Footwear")
+    ) {
+      toast.error("Please Select Size");
+      return;
+    }
+
     if (user.accountType === ACCOUNT_TYPE.SUPPLIER) {
       toast.error("You Are Seller You Can't Buy A Product");
       return;
@@ -89,6 +106,15 @@ const ProductDetails = () => {
         btn1Handler: () => navigate("/login"),
         btn2Handler: () => setConfirmationModal(null),
       });
+      return;
+    }
+
+    if (
+      !selectedSize &&
+      (productDetails?.category?.name === "Clothing" ||
+        productDetails?.category?.name === "Footwear")
+    ) {
+      toast.error("Please Select Size");
       return;
     }
 
@@ -114,8 +140,14 @@ const ProductDetails = () => {
 
   const buyProduct = async (addressData) => {
     const { address, city, pincode, state, country } = addressData;
+    let sizeData;
+    if(productDetails.category.name === "Clothing" || productDetails.category.name === "Footwear"){
+        sizeData = [{ productId: productId, quantity: 1, size: selectedSize }]
+    }else{
+        sizeData = [{ productId: productId, quantity: 1}]
+    }
     const orderData = {
-      orderItems: [{ productId: productId, quantity: 1 }],
+      orderItems: sizeData,
       address: `${address}, ${city}, ${pincode},${state}, ${country}`,
     };
     try {
@@ -134,14 +166,22 @@ const ProductDetails = () => {
     window.open(whatsappUrl, "_blank");
   };
 
+  if(loading){
+    return (
+      <div className="min-h-[calc(100vh-57px)] grid place-items-center">
+        <div className="spinner"></div>
+      </div>
+    )
+  }
+
   return (
     <>
       {/* <div className="min-h-[150vh]"> */}
       <div className=" max-w-maxContent mx-auto w-full lg:gap-x-10 flex flex-col lg:flex-row p-1 sm:p-6 border-b border-b-[#2c333f]">
         {/* ================= Image Section ================ */}
-        <div className="hidden lg:flex flex-col gap-y-4 sticky top-[60px] max-h-[440px]">
-          <div className={`flex gap-x-4 `}>
-            <div className=" flex flex-col gap-y-2">
+        <div className="w-full flex flex-col gap-y-4 fixed bottom-0 left-0 lg:sticky lg:top-[60px] max-h-[440px]">
+          <div className={`flex gap-x-4 justify-around`}>
+            <div className="hidden lg:flex flex-col gap-y-2 ">
               {imgUrls.map((image, i) => (
                 <img
                   src={image}
@@ -155,24 +195,38 @@ const ProductDetails = () => {
               ))}
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-4  max-[1023px]:w-full mx-auto">
               <img
                 src={selectedImg || imgUrls?.[0]}
                 alt={productDetails?.productName}
-                className=" max-w-[350px] max-h-[350px] object-cover aspect-square"
+                className=" max-w-[350px] max-h-[350px] object-cover aspect-square hidden lg:block"
               />
-              <div className="flex justify-around">
+              <div className="flex justify-around gap-4 p-5  max-[1023px]:bg-[#161d29a9] max-[1023px]:w-full">
                 <button
                   className="rounded-md bg-[#2C333F] text-white p-2"
                   onClick={handleAddToCart}
-                  disabled={productDetails?.stock === 0}
+                  disabled={
+                    productDetails?.stock === 0 &&
+                    productDetails?.sizes?.some((ele) => ele.stock === 0)
+                  }
                 >
-                  {productDetails?.stock > 0 ? "ADD TO CART" : "NOTIFY ME"}
+                  {productDetails?.stock > 0 ||
+                  productDetails?.sizes?.some((ele) => ele.stock > 0)
+                    ? "ADD TO CART"
+                    : "NOTIFY ME"}
                 </button>
                 <IconButton
-                  text={productDetails?.stock > 0 ? "BUY NOW" : "COMING SOON"}
+                  text={
+                    productDetails?.stock > 0 ||
+                    productDetails?.sizes?.some((ele) => ele.stock > 0)
+                      ? "BUY NOW"
+                      : "COMING SOON"
+                  }
                   onclick={handleBuyProduct}
-                  disabled={productDetails?.stock === 0}
+                  disabled={
+                    productDetails?.stock === 0 &&
+                    productDetails?.sizes?.some((ele) => ele.stock === 0)
+                  }
                 />
               </div>
             </div>
@@ -180,23 +234,8 @@ const ProductDetails = () => {
         </div>
 
         {/* ============ For Mobile Screen Image Slider And Buttons */}
-        <div className="flex lg:hidden mb-3">
+        <div className="flex lg:hidden mb-3 z-0">
           <ProductImageSlider images={imgUrls} />
-        </div>
-        <div className="fixed bottom-0 left-0 bg-[#161d29a9] gap-x-4 p-5 z-[1000] lg:hidden flex w-full justify-around">
-          <button
-            className="rounded-md bg-[#2C333F] text-white p-2 w-full"
-            onClick={handleAddToCart}
-            disabled={productDetails?.stock === 0}
-          >
-            {productDetails?.stock === 0 ? "NOTIFY ME" : "ADD TO CART"}
-          </button>
-          <IconButton
-            text={productDetails?.stock === 0 ? "COMING SOON" : "BUY NOW"}
-            onclick={handleBuyProduct}
-            customClasses={"w-full flex justify-center"}
-            disabled={productDetails?.stock === 0}
-          />
         </div>
         {/* =====================XXXXXXXXXXXXXXXXXX===================== */}
 
@@ -208,9 +247,11 @@ const ProductDetails = () => {
                 Home
               </Link>
               <p className="text-xl">›</p>
-              <p className="capitalize">{location.pathname?.split("/").at(-2)}</p>
+              <p className="capitalize">
+                {location.pathname?.split("/").at(-2)}
+              </p>
               <p className="text-xl">›</p>
-              <p className="uppercase">
+              <p className="uppercase text-[12px]">
                 {productDetails?.productName?.split(" ").slice(0, 4).join(" ")}
               </p>
             </div>
@@ -236,7 +277,7 @@ const ProductDetails = () => {
 
           <div className="flex gap-x-16 mt-2">
             <h2 className="font-medium text-gray-400">Highlights</h2>
-            <div>
+            <div className="capitalize">
               {productDetails?.specifications?.map((data, i) => (
                 <div className="flex items-center gap-4 text-sm" key={i}>
                   <p className="h-[6px] w-[6px] rounded-full bg-gray-500 mb-2"></p>
@@ -254,11 +295,32 @@ const ProductDetails = () => {
           <div className="flex gap-[70px] mb-2">
             <h2 className="font-medium text-gray-400">Colour</h2>
             <p
-              className={`w-[30px] h-[30px] rounded-full `}
+              className={`w-[30px] h-[30px] rounded-full border border-[#2c333f]`}
               style={{ background: `${productDetails?.color}` }}
               title={productDetails?.color?.toUpperCase()}
             ></p>
           </div>
+
+          {productDetails?.sizes?.length > 0 && (
+            <div className="flex gap-x-20 mb-2">
+              <h2 className="font-medium text-gray-400">Sizes</h2>
+              <div className="flex gap-3 flex-wrap">
+                {productDetails?.sizes.map((size, i) => (
+                  <button
+                  type="button"
+                    className={`uppercase ${size.stock === 0 && "opacity-50"} py-0.5 px-4 bg-[#2c333f] rounded-3xl cursor-pointer hover:border border-sky-400 ${
+                      selectedSize === size.size && "border border-sky-400"
+                    } box-content`}
+                    key={i}
+                    onClick={() => dispatch(setSelectedSize(size.size))}
+                    disabled={size.stock === 0}
+                  >
+                    {size.size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-x-20 ">
             <p className="text-gray-400 font-medium ">Seller</p>

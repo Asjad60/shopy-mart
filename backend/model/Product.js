@@ -31,6 +31,17 @@ const ProductSchema = new mongoose.Schema({
       ref: "Section",
     },
   ],
+  sizes:[
+    {
+      size:{
+        type:String,
+      },
+      stock:{
+        type:Number,
+        default:1
+      }
+    }
+  ],
   brand: {
     type: String,
     required: true,
@@ -38,7 +49,7 @@ const ProductSchema = new mongoose.Schema({
   },
   stock: {
     type: Number,
-    required: true,
+    default:0
   },
   color: {
     type: String,

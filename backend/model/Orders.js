@@ -20,6 +20,9 @@ const ordersSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    size:{
+      type: String,
+    },
     address: {
       type: String,
       required: true,

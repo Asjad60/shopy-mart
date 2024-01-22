@@ -16,30 +16,50 @@ exports.createOrder = async (req, res) => {
 
     for (const orderItem of orderItems) {
       try {
-        const [user, updatedProduct] = await Promise.all([
-          UserModel.findByIdAndUpdate(
-            userId,
-            {
-              $push: { products: orderItem.productId },
-            },
-            { new: true }
-          ),
+        await UserModel.findByIdAndUpdate(
+          userId,
+          {
+            $push: { products: orderItem.productId },
+          },
+          { new: true }
+        );
 
-          ProductModel.findByIdAndUpdate(
+        let updatedProduct;
+        if (orderItem.size) {
+          console.log("orderItem.size section");
+          updatedProduct = await ProductModel.findByIdAndUpdate(
             orderItem.productId,
-            { 
-              $push: { buyer: userId }, 
-              $inc: { stock: -orderItem.quantity } 
+            {
+              $push: { buyer: userId },
+              $inc: {
+                "sizes.$[elem].stock": orderItem.size ? -orderItem.quantity : 0,
+              },
             },
-            { new: true }
-          ),
-        ]);
+            {
+              new: true,
+              arrayFilters: [{ "elem.size": orderItem.size }],
+            }
+          );
+        } else {
+          console.log("else section");
+          updatedProduct = await ProductModel.findByIdAndUpdate(
+            orderItem.productId,
+            {
+              $push: { buyer: userId },
+              $inc: { stock: -orderItem.quantity },
+            },
+            {
+              new: true,
+            }
+          );
+        }
 
         const createOrder = await OrderModel.create({
           customer: userId,
           product: orderItem.productId,
           quantity: orderItem.quantity,
           orderPrice: updatedProduct.price * orderItem.quantity,
+          size: orderItem.size,
           status,
           address,
         });
@@ -100,15 +120,6 @@ exports.cancelOrder = async (req, res) => {
         },
         { new: true }
       ),
-
-      ProductModel.findByIdAndUpdate(
-        productId,
-        {
-          $pull: { buyer: userId },
-          $inc: { stock: existingOrder.quantity },
-        },
-        { new: true }
-      ),
       UserModel.findOneAndUpdate(
         { orders: orderId },
         {
@@ -118,6 +129,30 @@ exports.cancelOrder = async (req, res) => {
       ),
       OrderModel.findByIdAndDelete(orderId),
     ]);
+
+    if (existingOrder.size) {
+      await ProductModel.findByIdAndUpdate(
+        productId,
+        {
+          $pull: { buyer: userId },
+          $inc: {
+            "sizes.$[elem].stock": existingOrder.size
+              ? existingOrder.quantity
+              : 0,
+          },
+        },
+        { new: true, arrayFilters: [{ "elem.size": existingOrder.size }] }
+      );
+    } else {
+      await ProductModel.findByIdAndUpdate(
+        productId,
+        {
+          $pull: { buyer: userId },
+          $inc: { stock: existingOrder.quantity },
+        },
+        { new: true }
+      );
+    }
 
     return res.status(200).json({
       success: true,
@@ -164,17 +199,6 @@ exports.changeOrderStatus = async (req, res) => {
           console.error("Error removing order from supplier:", error);
         }),
 
-        ProductModel.findByIdAndUpdate(
-          updatedStatus.product,
-          {
-            $pull: { buyer: updatedStatus.customer },
-            $inc: { stock: updatedStatus.quantity },
-          },
-          { new: true }
-        ).catch((error) => {
-          console.error("Error removing cutomer from buyer:", error);
-        }),
-
         UserModel.findByIdAndUpdate(
           updatedStatus.customer,
           {
@@ -185,6 +209,30 @@ exports.changeOrderStatus = async (req, res) => {
           console.error("Error removing product from customer:", error);
         }),
       ]);
+
+      if (updatedStatus.size) {
+        await ProductModel.findByIdAndUpdate(
+          updatedStatus.product,
+          {
+            $pull: { buyer: updatedStatus.customer },
+            $inc: {
+              "sizes.$[elem].stock": updatedStatus.size
+                ? updatedStatus.quantity
+                : 0,
+            },
+          },
+          { new: true, arrayFilters: [{ "elem.size": updatedStatus.size }] }
+        );
+      } else {
+        await ProductModel.findByIdAndUpdate(
+          updatedStatus.product,
+          {
+            $pull: { buyer: updatedStatus.customer },
+            $inc: {stock:  updatedStatus.quantity },
+          },
+          { new: true }
+        );
+      }
     }
 
     return res.status(200).json({

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 import {toast} from "react-hot-toast";
 
 const RenderCartProducts = () => {
-  const { cart } = useSelector((state) => state.cart);
+  const { cart,selectedSize } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [avgReviewCount, setAvgReviewCount] = useState(0);
 
@@ -31,7 +31,8 @@ const RenderCartProducts = () => {
 
   const handleChangeQuantity = (productId,quantity) => {
     const product = cart.find(product => product._id === productId)
-    if(product.stock < quantity){
+    const stockSelectedSize = product.sizes.find(size => size.size === selectedSize)
+    if(product.stock < quantity || (stockSelectedSize && stockSelectedSize.stock < quantity)){
       toast.error("Stock not Available")
       return
     }
