@@ -11,7 +11,7 @@ const initialState = {
   totalItems: localStorage.getItem("totalItems")
     ? JSON.parse(localStorage.getItem("totalItems"))
     : 0,
-  selectedSize: ""
+  selectedSize: "",
 };
 
 const cartSlice = createSlice({
@@ -20,18 +20,32 @@ const cartSlice = createSlice({
   reducers: {
     addToCart(state, action) {
       const product = action.payload;
+      const category = {cloth:"Clothing",foot:"Footwear"}
       const findProduct = state.cart.find((item) => item._id === product._id);
-      if (findProduct) {
-        const selectedSizeStock = findProduct.sizes.find(ele => ele.size === state.selectedSize);
-        if (findProduct.stock === findProduct.quantity || (findProduct.sizes && selectedSizeStock && selectedSizeStock.stock === findProduct.quantity)) return;        
-        findProduct.quantity++;
-        state.total += product?.price;
-        localStorage.setItem("cart", JSON.stringify(state.cart));
-        localStorage.setItem("total", JSON.stringify(state.total));
+      const isProductWithSelectedSizeInCart =
+        findProduct &&
+        state.cart.some(ele => ele.size === state.selectedSize);
+
+      if (isProductWithSelectedSizeInCart) {
+        toast.error("Product Already in Cart");
         return;
       }
 
-      const productWithQuantity = { ...product, quantity: 1 };
+      if(findProduct && (findProduct.category.name !== category.cloth && findProduct.category.name !== category.foot)){
+        toast.error("Product Already in Cart");
+        return;
+      }
+
+      let productWithQuantity;
+      if (product.stock) {
+        productWithQuantity = { ...product, quantity: 1 };
+      } else {
+        productWithQuantity = {
+          ...product,
+          quantity: 1,
+          size: state.selectedSize,
+        };
+      }
 
       state.cart.push(productWithQuantity);
       state.totalItems++;
@@ -43,19 +57,22 @@ const cartSlice = createSlice({
 
       toast.success("Product added to cart");
     },
+    
     removeFromCart(state, action) {
-      const productId = action.payload;
-      const index = state.cart.findIndex((item) => item._id === productId);
+      const index = action.payload;
 
       if (index >= 0) {
         state.totalItems--;
-        const totalDecrease = state.cart[index].price * state.cart[index].quantity;
+        const totalDecrease =
+          state.cart[index].price * state.cart[index].quantity;
         state.total -= totalDecrease;
-        let filtered = state.cart.filter((item) => item._id !== action.payload);
+
+        let filtered = state.cart.filter((_, i) => i !== index);
         state.cart = filtered;
-        localStorage.removeItem("cart", JSON.stringify(state.cart));
-        localStorage.removeItem("total", JSON.stringify(state.total));
-        localStorage.removeItem("totalItems", JSON.stringify(state.totalItems));
+
+        localStorage.setItem("cart", JSON.stringify(state.cart));
+        localStorage.setItem("total", JSON.stringify(state.total));
+        localStorage.setItem("totalItems", JSON.stringify(state.totalItems));
 
         toast.success("Removed From Cart");
       }
@@ -65,7 +82,10 @@ const cartSlice = createSlice({
       const { productId, quantity } = action.payload;
       const product = state.cart.find((item) => item._id === productId);
       if (product) {
-        state.total += (quantity - product.quantity) * product.price;
+        const quantityDifference = quantity - product.quantity;
+        const totalIncrease = quantityDifference * product.price;
+
+        state.total += totalIncrease;
         product.quantity = quantity;
 
         localStorage.setItem("cart", JSON.stringify(state.cart));
@@ -73,8 +93,8 @@ const cartSlice = createSlice({
       }
     },
 
-    setSelectedSize(state,action){
-      state.selectedSize = action.payload 
+    setSelectedSize(state, action) {
+      state.selectedSize = action.payload;
     },
 
     resetCart(state) {
@@ -89,6 +109,11 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, removeFromCart, resetCart,setSelectedSize, updateQuantity } =
-  cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  resetCart,
+  setSelectedSize,
+  updateQuantity,
+} = cartSlice.actions;
 export default cartSlice.reducer;

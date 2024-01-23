@@ -33,19 +33,15 @@ function Home() {
     getProductData();
   }, []);
 
-  let randomTwoProducts;
-  if (products && products?.latestProducts) {
-    const randomIdx1 = Math.floor(
-      Math.random() * products?.latestProducts?.length
-    );
-    const randomIdx2 = Math.floor(
-      Math.random() * products?.latestProducts?.length
-    );
-
-    randomTwoProducts = products?.latestProducts
-      .slice(randomIdx1, randomIdx1 + 1)
-      .concat(products?.latestProducts.slice(randomIdx2, randomIdx2 + 1));
+  let shuffledProducts = [...(products?.latestProducts || [])];
+  for (let i = shuffledProducts.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledProducts[i], shuffledProducts[j]] = [
+      shuffledProducts[j],
+      shuffledProducts[i],
+    ];
   }
+  const randomTwoProducts = shuffledProducts.slice(0, 2);
 
   if (loading) {
     return (
@@ -60,13 +56,15 @@ function Home() {
       <ImageSectionSlider products={products?.randomProducts} />
       <div className=" w-full max-w-maxContentTab lg:max-w-maxContent mx-auto mt-20 p-4">
         <div className="  w-full flex flex-col sm:flex-row justify-center items-center gap-6 lg:gap-20  mb-20">
-          {products?.latestProducts?.length  &&
+          {products?.latestProducts?.length &&
             randomTwoProducts.map((ele, i) => (
               <div
                 className="border border-[#2c333f] text-white rounded-sm w-full max-w-[500px]  h-full max-h-[500px]  p-4 flex flex-col items-center gap-4"
                 key={i}
               >
-                <p className="uppercase">{ele.productName}</p>
+                <p className="uppercase">
+                  {ele.productName.split(" ").slice(0, 4).join(" ")}
+                </p>
                 <h1 className="text-2xl font-medium min-[350px]:whitespace-nowrap">
                   Just Starting At <span className=" text-lg">₹</span>
                   {ele.price}
@@ -85,7 +83,7 @@ function Home() {
             ))}
         </div>
 
-        <LatestProducts products={ products?.latestProducts} />
+        <LatestProducts products={products?.latestProducts} />
 
         <PopularProducts products={products?.popularProducts} />
       </div>

@@ -24,9 +24,9 @@ const RenderCartProducts = () => {
     setAvgReviewCount(avgCounts);
   }, [cart]);
 
-  const handleRemoveFromCart = (event, productId) => {
+  const handleRemoveFromCart = (event, index) => {
     event.preventDefault();
-    dispatch(removeFromCart(productId));
+    dispatch(removeFromCart(index));
   };
 
   const handleChangeQuantity = (productId, quantity) => {
@@ -109,7 +109,7 @@ const RenderCartProducts = () => {
 
             <div className="flex flex-col items-center gap-y-3 max-h-[100px]">
               <button
-                onClick={(event) => handleRemoveFromCart(event, product?._id)}
+                onClick={(event) => handleRemoveFromCart(event, index)}
                 className="flex gap-x-2 items-center bg-[#161d29] p-2 rounded-md text-red-600"
               >
                 <RiDeleteBin6Line />

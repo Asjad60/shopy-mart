@@ -182,7 +182,7 @@ function Catalog() {
             </div>
             <div className="py-4">
               <div className="grid max-[445px]:place-items-center grid-cols-1 min-[445px]:grid-cols-2 min-[865px]:grid-cols-3 min-[1095px]:grid-cols-4 gap-y-5">
-                {filteredProducts.length > 0 ? (
+                {filteredProducts?.length > 0 ? (
                   filteredProducts?.map((product, index) => (
                     <ProductCard product={product} key={index} />
                   ))

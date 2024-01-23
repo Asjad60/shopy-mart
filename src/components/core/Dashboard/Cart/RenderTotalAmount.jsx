@@ -6,7 +6,7 @@ import { resetCart } from "../../../../slices/cartSlice";
 import AddressForm from "../../../common/AddressForm";
 
 const RenderTotalAmount = () => {
-  const { total, cart,selectedSize } = useSelector((state) => state.cart);
+  const { total, cart } = useSelector((state) => state.cart);
   const { token } = useSelector((state) => state.auth);
   const [addressModal, setAddressModal] = useState(false);
   const dispatch = useDispatch();
@@ -17,7 +17,7 @@ const RenderTotalAmount = () => {
         return {
           productId: product._id,
           quantity: product.quantity || 1,
-          size:selectedSize
+          size:product.size
         }
        }else{
         return {

@@ -199,14 +199,14 @@ const ProductDetails = () => {
               <img
                 src={selectedImg || imgUrls?.[0]}
                 alt={productDetails?.productName}
-                className=" max-w-[350px] max-h-[350px] object-cover aspect-square hidden lg:block"
+                className=" max-w-[350px] max-h-[350px] object-contain aspect-square hidden lg:block"
               />
               <div className="flex justify-around gap-4 p-5  max-[1023px]:bg-[#161d29a9] max-[1023px]:w-full">
                 <button
                   className="rounded-md bg-[#2C333F] text-white p-2"
                   onClick={handleAddToCart}
                   disabled={
-                    productDetails?.stock === 0 &&
+                    productDetails?.stock === 0 ||
                     productDetails?.sizes?.some((ele) => ele.stock === 0)
                   }
                 >
@@ -224,7 +224,7 @@ const ProductDetails = () => {
                   }
                   onclick={handleBuyProduct}
                   disabled={
-                    productDetails?.stock === 0 &&
+                    productDetails?.stock === 0 ||
                     productDetails?.sizes?.some((ele) => ele.stock === 0)
                   }
                 />
