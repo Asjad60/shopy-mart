@@ -7,10 +7,10 @@ import { removeFromCart, updateQuantity } from "../../../../slices/cartSlice";
 import GetAvgRating from "../../../../utils/avgRating";
 import RatingStars from "../../../common/RatingStars";
 import { Link } from "react-router-dom";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
 const RenderCartProducts = () => {
-  const { cart,selectedSize } = useSelector((state) => state.cart);
+  const { cart, selectedSize } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
   const [avgReviewCount, setAvgReviewCount] = useState(0);
 
@@ -29,15 +29,21 @@ const RenderCartProducts = () => {
     dispatch(removeFromCart(productId));
   };
 
-  const handleChangeQuantity = (productId,quantity) => {
-    const product = cart.find(product => product._id === productId)
-    const stockSelectedSize = product.sizes.find(size => size.size === selectedSize)
-    if(product.stock < quantity || (stockSelectedSize && stockSelectedSize.stock < quantity)){
-      toast.error("Stock not Available")
-      return
+  const handleChangeQuantity = (productId, quantity) => {
+    const product = cart.find((product) => product._id === productId);
+    const stockSelectedSize = product.sizes.find(
+      (size) => size.size === selectedSize
+    );
+    console.log("stockSelectedSize  ==> ", stockSelectedSize);
+    if (
+      (product.stock && product.stock < quantity) ||
+      (stockSelectedSize && stockSelectedSize.stock < quantity)
+    ) {
+      toast.error("Stock not Available");
+      return;
     }
-    dispatch(updateQuantity({productId,quantity}))
-  }
+    dispatch(updateQuantity({ productId, quantity }));
+  };
 
   return (
     <div className=" divide-y divide-[#2C333F] w-full">
@@ -79,36 +85,40 @@ const RenderCartProducts = () => {
               </div>
             </div>
           </div>
-          
-          <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
-          <div onClick={(e)=> e.preventDefault()}>
-            <select 
-            name="quantity" 
-            id="quantity" 
-            className="bg-[#2c333f] px-2 py-[6px] border-b border-b-slate-400 rounded-md outline-none"
-            onChange={(e)=> handleChangeQuantity(product._id,e.target.value)}
-            defaultValue={product?.quantity}
-            >
-              {
-                 Array(5).fill(null).map((_,i)=>(
-                  <option value={i+1} key={i}>{i+1}</option>
-                ))
-              }
-            </select>
-          </div>
 
-          <div className="flex flex-col items-center gap-y-3 max-h-[100px]">
-            <button
-              onClick={(event) => handleRemoveFromCart(event, product?._id)}
-              className="flex gap-x-2 items-center bg-[#161d29] p-2 rounded-md text-red-600"
-            >
-              <RiDeleteBin6Line />
-              <span>Remove</span>
-            </button>
-            <p className="text-xl font-medium text-yellow-400">
-              ₹ {product?.price}
-            </p>
-          </div>
+          <div className="flex flex-col sm:flex-row gap-4 items-center sm:items-start">
+            <div onClick={(e) => e.preventDefault()}>
+              <select
+                name="quantity"
+                id="quantity"
+                className="bg-[#2c333f] px-2 py-[6px] border-b border-b-slate-400 rounded-md outline-none"
+                onChange={(e) =>
+                  handleChangeQuantity(product._id, e.target.value)
+                }
+                defaultValue={product?.quantity}
+              >
+                {Array(5)
+                  .fill(null)
+                  .map((_, i) => (
+                    <option value={i + 1} key={i}>
+                      {i + 1}
+                    </option>
+                  ))}
+              </select>
+            </div>
+
+            <div className="flex flex-col items-center gap-y-3 max-h-[100px]">
+              <button
+                onClick={(event) => handleRemoveFromCart(event, product?._id)}
+                className="flex gap-x-2 items-center bg-[#161d29] p-2 rounded-md text-red-600"
+              >
+                <RiDeleteBin6Line />
+                <span>Remove</span>
+              </button>
+              <p className="text-xl font-medium text-yellow-400">
+                ₹ {product?.price}
+              </p>
+            </div>
           </div>
         </Link>
       ))}

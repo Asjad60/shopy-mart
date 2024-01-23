@@ -49,7 +49,8 @@ const cartSlice = createSlice({
 
       if (index >= 0) {
         state.totalItems--;
-        state.total -= state.cart[index].price;
+        const totalDecrease = state.cart[index].price * state.cart[index].quantity;
+        state.total -= totalDecrease;
         let filtered = state.cart.filter((item) => item._id !== action.payload);
         state.cart = filtered;
         localStorage.removeItem("cart", JSON.stringify(state.cart));
@@ -74,7 +75,6 @@ const cartSlice = createSlice({
 
     setSelectedSize(state,action){
       state.selectedSize = action.payload 
-      localStorage.setItem("size",JSON.stringify(state.selectedSize))
     },
 
     resetCart(state) {

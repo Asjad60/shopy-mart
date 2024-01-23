@@ -47,7 +47,7 @@ const ImageSectionSlider = ({ products }) => {
                 <img
                   src={product?.thumbnail}
                   alt=""
-                  className=" w-60 h-60 md:max-w-[500px] md:w-full md:min-h-[500px] md:h-full object-cover"
+                  className=" w-60 h-60 md:max-w-[500px] md:w-full md:min-h-[500px] md:max-h-[500px] md:h-full object-cover"
                   loading="lazy"
                 />
                 </div>
