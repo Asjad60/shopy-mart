@@ -42,7 +42,7 @@ const FilterProductsSidebar = ({
       });
     }
     //eslint-disable-next-line
-  }, [products]);
+  }, []);
 
   return (
     <div className="z-[1000]">

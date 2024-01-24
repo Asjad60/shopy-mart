@@ -15,6 +15,7 @@ function Catalog() {
   const [active, setActive] = useState(1);
   const [categoryId, setCategoryId] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [minAndMaxPrice, setMinAndMaxPrice] = useState({
     min: 0,
     max: 0,
@@ -40,11 +41,13 @@ function Catalog() {
       }
     };
     getCategories();
+    setSelectedFilters([]);
   }, [catalogName]);
 
   useEffect(() => {
     const getCategoryDetails = async () => {
       try {
+        setLoading(true)
         const response = await getCatalogPageData(
           categoryId,
           pages.page,
@@ -52,7 +55,7 @@ function Catalog() {
         );
         // console.log("getCategoryDetails ===> ", response);
         setCatalogPageData(response);
-
+        setLoading(false)
         // sortingProducts(1, response);
       } catch (error) {
         console.log("getCategoryDetails", error);
@@ -61,7 +64,7 @@ function Catalog() {
     if (categoryId) {
       getCategoryDetails();
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, pages.page, pages.pageSize]);
 
   useEffect(() => {
@@ -99,9 +102,10 @@ function Catalog() {
         },
       },
     }));
-  }, [active, catalogPageData]);
+     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
 
-  if (!catalogPageData || !categoryId) {
+  if ( loading || !catalogPageData) {
     return (
       <div className="grid place-items-center min-h-screen min-w-full">
         <div className="spinner"></div>
