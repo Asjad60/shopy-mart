@@ -26,7 +26,7 @@ exports.resetPasswordToken = async (req, res) => {
       { new: true }
     );
 
-    const url = `http://localhost:3000/update-password/${token}`;
+    const url = `https://shopy-mart.vercel.app/update-password/${token}`;
 
     await mailSender(
       email,
