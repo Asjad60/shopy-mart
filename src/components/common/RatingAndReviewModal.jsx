@@ -40,7 +40,7 @@ const RatingAndReviewModal = ({ setRatingAndReviewModal ,productId}) => {
   };
 
   return (
-    <div className=" fixed inset-0 bg-[rgba(0,0,0,0.2)] grid place-items-center backdrop-blur-[3px] text-white overflow-auto">
+    <div className=" fixed inset-0 bg-[rgba(0,0,0,0.2)] grid place-items-center backdrop-blur-[3px] z-[1000] text-white overflow-auto">
       <div className="border border-slate-500 bg-slate-800 max-w-[500px] w-full p-4 rounded-md">
         <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <div className="flex w-full justify-center">

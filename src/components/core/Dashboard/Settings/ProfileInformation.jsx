@@ -30,7 +30,7 @@ const ProfileInformation = () => {
         ? user?.additionalDetails?.gender
         : "",
       contactNumber: user?.additionalDetails?.contactNumber
-        ? user?.additionalDetails?.contactNumbe
+        ? user?.additionalDetails?.contactNumber
         : "",
       about: user?.additionalDetails?.about
         ? user?.additionalDetails?.about
@@ -88,7 +88,7 @@ const ProfileInformation = () => {
                 id="DOB"
                 onChange={handleFormData}
                 className="rounded-md bg-[#2C333F] w-full border-b border-b-[#445866]  py-3 px-4 outline-none"
-                defaultValue={user?.additionalDetails?.dateOfBirth}
+                value={formData.dateOfBirth}
                 required
               />
             </div>
@@ -101,7 +101,7 @@ const ProfileInformation = () => {
                 id="gender"
                 onChange={handleFormData}
                 className=" bg-[#2C333F] rounded-md border-b border-b-[#445866] w-full py-3 px-4 outline-none"
-                value={user?.additionalDetails?.gender || ""}
+                value={formData.gender}
                 required
               >
                 <option value="" disabled>
@@ -131,7 +131,7 @@ const ProfileInformation = () => {
                 maxLength={12}
                 minLength={10}
                 className=" bg-[#2C333F] rounded-md border-b border-b-[#445866] w-full py-3 px-4 outline-none"
-                defaultValue={user?.additionalDetails?.contactNumber}
+                value={formData.contactNumber}
                 required
               />
             </div>
@@ -146,7 +146,7 @@ const ProfileInformation = () => {
                 placeholder="Enter Bio Details"
                 onChange={handleFormData}
                 className=" bg-[#2C333F] rounded-md border-b border-b-[#445866] w-full py-3 px-4 outline-none"
-                defaultValue={user?.additionalDetails?.about}
+                value={formData.about}
                 required
               />
             </div>

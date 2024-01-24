@@ -196,11 +196,13 @@ const ProductDetails = () => {
             </div>
 
             <div className="flex flex-col gap-4  max-[1023px]:w-full mx-auto">
+              <div className="max-w-[350px] max-h-[350px] bg-white">
               <img
                 src={selectedImg || imgUrls?.[0]}
                 alt={productDetails?.productName}
                 className=" max-w-[350px] max-h-[350px] object-contain aspect-square hidden lg:block"
               />
+              </div>
               <div className="flex justify-around gap-4 p-5  max-[1023px]:bg-[#161d29a9] max-[1023px]:w-full">
                 <button
                   className="rounded-md bg-[#2C333F] text-white p-2"

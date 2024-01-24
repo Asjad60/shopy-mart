@@ -23,11 +23,11 @@ const ProductImageSlider = ({ images }) => {
       className="mySwiper max-w-[400px] w-full "
     >
       {images?.map((image, index) => (
-        <SwiperSlide key={index}>
+        <SwiperSlide key={index} className="max-w-[400px] w-full  max-h-[400px] h-full bg-white">
           <img
             src={image}
             alt="ProductImage"
-            className="max-w-[400px] w-full  max-h-[400px] h-full  object-cover rounded-md"
+            className="max-w-[400px] w-full  max-h-[400px] h-full  object-contain rounded-md"
           />
         </SwiperSlide>
       ))}

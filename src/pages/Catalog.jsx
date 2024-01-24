@@ -53,7 +53,7 @@ function Catalog() {
         // console.log("getCategoryDetails ===> ", response);
         setCatalogPageData(response);
 
-        sortingProducts(1, response);
+        // sortingProducts(1, response);
       } catch (error) {
         console.log("getCategoryDetails", error);
       }
@@ -64,18 +64,16 @@ function Catalog() {
     // eslint-disable-next-line
   }, [categoryId, pages.page, pages.pageSize]);
 
-  if (!catalogPageData || !categoryId) {
-    return (
-      <div className="grid place-items-center min-h-screen min-w-full">
-        <div className="spinner"></div>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!catalogPageData) {
+      return;
+    }
 
-  function sortingProducts(sortingNum = 1, response) {
-    setActive(sortingNum);
-    const sortedProducts = [...response?.data?.selectedCategory?.products];
-    switch (sortingNum) {
+    const sortedProducts = [
+      ...catalogPageData.data?.selectedCategory?.products,
+    ];
+
+    switch (active) {
       case 1:
         sortedProducts.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -101,6 +99,14 @@ function Catalog() {
         },
       },
     }));
+  }, [active, catalogPageData]);
+
+  if (!catalogPageData || !categoryId) {
+    return (
+      <div className="grid place-items-center min-h-screen min-w-full">
+        <div className="spinner"></div>
+      </div>
+    );
   }
 
   const filteredProducts =
@@ -155,7 +161,7 @@ function Catalog() {
                     ? "border-b border-b-yellow-400 text-yellow-400"
                     : ""
                 }`}
-                onClick={() => sortingProducts(1, catalogPageData)}
+                onClick={(e) => setActive(1)}
               >
                 Newest First
               </p>
@@ -165,7 +171,7 @@ function Catalog() {
                     ? "border-b border-b-yellow-400 text-yellow-400"
                     : ""
                 }`}
-                onClick={() => sortingProducts(2, catalogPageData)}
+                onClick={(e) => setActive(2)}
               >
                 Price -- Low to High
               </p>
@@ -175,7 +181,7 @@ function Catalog() {
                     ? "border-b border-b-yellow-400 text-yellow-400"
                     : ""
                 }`}
-                onClick={() => sortingProducts(3, catalogPageData)}
+                onClick={(e) => setActive(3)}
               >
                 Price -- High to Low
               </p>
@@ -187,7 +193,9 @@ function Catalog() {
                     <ProductCard product={product} key={index} />
                   ))
                 ) : (
-                  <h2 className="text-2xl font-medium text-yellow-400">Not Found</h2>
+                  <h2 className="text-2xl font-medium text-yellow-400">
+                    Not Found
+                  </h2>
                 )}
               </div>
             </div>
