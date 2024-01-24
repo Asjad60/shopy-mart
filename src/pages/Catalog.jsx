@@ -99,7 +99,8 @@ function Catalog() {
         },
       },
     }));
-  }, [active, catalogPageData]);
+    // eslint-disable-next-line  react-hooks/exhaustive-deps 
+  }, [active]);
 
   if (!catalogPageData || !categoryId) {
     return (
