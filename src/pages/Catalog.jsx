@@ -99,7 +99,6 @@ function Catalog() {
         },
       },
     }));
-    //
   }, [active, catalogPageData]);
 
   if (!catalogPageData || !categoryId) {
