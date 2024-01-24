@@ -29,6 +29,20 @@ const FilterProductsSidebar = ({
       }
     });
   };
+  function sortMinMaxPrice() {
+    const sortedProducts = products?.sort((a, b) => a.price - b.price);
+    return { min: sortedProducts[0]?.price, max: sortedProducts.at(-1)?.price };
+  }
+
+  useEffect(() => {
+    if(products){
+      setMinAndMaxPrice({
+        min: 0,
+        max: sortMinMaxPrice().max,
+      });
+    }
+    //eslint-disable-next-line
+  }, [products]);
 
   return (
     <div className="z-[1000]">
