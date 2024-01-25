@@ -9,7 +9,7 @@ const contactDetails = [
     icon: "IoMdChatbubbles",
     heading: "Chat on us",
     description: "Our friendly team is here to help.",
-    details: "info@craftycreation.com",
+    details: "info@shopymart.com",
   },
   {
     icon: "IoEarth",

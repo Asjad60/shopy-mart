@@ -6,7 +6,7 @@ export const cardTexts = [
   },
   {
     title: "User-Friendly Interface",
-    des: "Navigating through CraftyCreation is a breeze. Our intuitive interface is designed to make your shopping journey smooth, from search to checkout.",
+    des: "Navigating through ShopyMart is a breeze. Our intuitive interface is designed to make your shopping journey smooth, from search to checkout.",
     icon:"FcTwoSmartphones"
   },
   {

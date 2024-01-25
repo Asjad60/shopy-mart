@@ -20,7 +20,7 @@ const About = () => {
 
             <p className="text-sm text-gray-300 mt-6">
               Founded with a passion for connecting peoplewith the products they
-              love, CraftyCreation emerged as a hu where exploration meets
+              love, ShopyMart emerged as a hu where exploration meets
               satisfaction. We began the journey with a commitment to redefine
               online shopping and today, we stand proud as a beacon of
               reliability and innovation
