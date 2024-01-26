@@ -43,22 +43,14 @@ const ChipInput = ({
     }
   };
 
-  // handleCHange for mobile onKeyDown is not working on mobile 
-  const handleChange = (e) => {
-<<<<<<< HEAD
-    setTags(e.target.value)
-=======
-    setTags(e.target.value.trim())
->>>>>>> 1bc4b9220cd05fbeefa5d7b9b07e3be4de80d773
-  }
+
+    const handleChange = (e) => {
+      setTags(e.target.value)
+    }
 
   const handleClick = () =>{
     if (tags && !chips.includes(tags)) {
-<<<<<<< HEAD
       const newChips = [...chips, tags.trim()];
-=======
-      const newChips = [...chips, tags];
->>>>>>> 1bc4b9220cd05fbeefa5d7b9b07e3be4de80d773
       setChips(newChips);
       setTags("")
     }
@@ -101,11 +93,7 @@ const ChipInput = ({
       />
       <button 
       type="button"
-<<<<<<< HEAD
       className="absolute right-2 top-3 md:hidden"
-=======
-      className="absolute right-2 top-3"
->>>>>>> 1bc4b9220cd05fbeefa5d7b9b07e3be4de80d773
       onClick={handleClick}
       >
         <IoArrowForwardCircleOutline size={25}/>
