@@ -1,8 +1,7 @@
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import {useState,useEffect} from "react";
 import { MdClose } from "react-icons/md";
 import { useSelector } from "react-redux";
+import { IoArrowForwardCircleOutline } from "react-icons/io5";
 
 const ChipInput = ({
   label,
@@ -14,6 +13,7 @@ const ChipInput = ({
   getValues,
 }) => {
   const [chips, setChips] = useState([]);
+  const [tags, setTags] = useState("");
   const { editProduct, product } = useSelector((state) => state.product);
 
   useEffect(() => {
@@ -22,10 +22,12 @@ const ChipInput = ({
       setChips(product?.tags);
     }
     register(name, { required: true, validate: (value) => value.length > 0 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     setValue(name, chips);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chips]);
 
   const handleKeydown = (e) => {
@@ -40,6 +42,19 @@ const ChipInput = ({
       }
     }
   };
+
+  // handleCHange for mobile onKeyDown is not working on mobile 
+  const handleChange = (e) => {
+    setTags(e.target.value.trim())
+  }
+
+  const handleClick = () =>{
+    if (tags && !chips.includes(tags)) {
+      const newChips = [...chips, tags];
+      setChips(newChips);
+      setTags("")
+    }
+  }
 
   const handleDeleteItem = (chipIndex) => {
     const newChips = chips.filter((_, index) => index !== chipIndex);
@@ -65,14 +80,25 @@ const ChipInput = ({
             </div>
           ))}
       </div>
+      <div className="relative w-full">
       <input
         type="text"
         name={name}
         id={name}
+        value={tags}
+        onChange={handleChange}
         placeholder={placeholder}
         onKeyDown={handleKeydown}
-        className="bg-[#2C333F] outline-none p-3 rounded-md border-b border-b-slate-300 "
+        className="bg-[#2C333F] outline-none p-3 rounded-md border-b border-b-slate-300 w-full"
       />
+      <button 
+      type="button"
+      className="absolute right-2 top-3"
+      onClick={handleClick}
+      >
+        <IoArrowForwardCircleOutline size={25}/>
+      </button>
+      </div>
       {errors[name] && (
         <span className="ml-2 text-xs tracking-wide text-red-600">
           {label} is required
