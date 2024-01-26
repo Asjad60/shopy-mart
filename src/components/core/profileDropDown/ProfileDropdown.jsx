@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { VscDashboard, VscSignOut } from "react-icons/vsc";
 import { logout } from "../../../services/operations/authApi";
 
-function ProfileDropdown() {
+function ProfileDropdown({setOpenNavbar}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.profile);
@@ -29,7 +29,7 @@ function ProfileDropdown() {
           onClick={(e) => e.stopPropagation()}
           ref={ref}
         >
-          <Link to="/dashboard/my-profile" onClick={() => setIsVisible(false)}>
+          <Link to="/dashboard/my-profile" onClick={() => {setIsVisible(false); setOpenNavbar(false)}}>
             <div className="dashboard-link">
               <VscDashboard style={{ fontSize: "1rem", marginRight: "4px" }} />
               Dashboard

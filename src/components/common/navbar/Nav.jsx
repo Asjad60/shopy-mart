@@ -174,17 +174,17 @@ const Nav = () => {
 
               {token === null && !(location.pathname === "/login") && (
                 <Link to="/login">
-                  <button className="login-sign-btn">Log in</button>
+                  <button className="login-sign-btn" onClick={() => setOpenNavbar(false)}>Log in</button>
                 </Link>
               )}
 
               {token === null && !(location.pathname === "/signup") && (
                 <Link to="/signup">
-                  <button className="login-sign-btn">Sign Up</button>
+                  <button className="login-sign-btn" onClick={() => setOpenNavbar(false)}>Sign Up</button>
                 </Link>
               )}
 
-              {token !== null && <ProfileDropdown />}
+              {token !== null && <ProfileDropdown setOpenNavbar={setOpenNavbar}/>}
             </div>
           </div>
         </div>

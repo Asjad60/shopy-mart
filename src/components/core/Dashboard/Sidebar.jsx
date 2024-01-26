@@ -30,7 +30,7 @@ function Sidebar() {
   return (
     <>
       <div
-        className={`min-w-[220px] flex flex-col border-r-[1px] border-r-[#2C333F] min-h-[calc(100vh-3.6rem)] bg-[#161d29] absolute md:relative py-10 transition-all duration-200 ease-in-out ${
+        className={`z-[1000] min-w-[220px] flex flex-col border-r-[1px] border-r-[#2C333F] min-h-[calc(100vh-3.6rem)] bg-[#161d29] absolute md:relative py-10 transition-all duration-200 ease-in-out ${
           transformed ? "left-0" : " left-[-100%] md:left-0"
         }`}
       >
