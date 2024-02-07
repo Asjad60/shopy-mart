@@ -17,6 +17,8 @@ function VerifyEmail() {
     if (!signupData) {
       navigate("/signup");
     }
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleVerifyAndSignup = (e) => {
@@ -46,7 +48,8 @@ function VerifyEmail() {
                   style={{
                     boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
                   }}
-                  className="render-inputs pl-[5%]"
+                  placeholder="-"
+                  className="render-inputs text-center"
                 />
               )}
               containerStyle={{
@@ -60,7 +63,7 @@ function VerifyEmail() {
           </form>
           <div className="back-and-resend-btn">
             <Link to="/login">
-              <p>
+              <p className="flex">
                 <BiArrowBack
                   style={{ transform: "translateY(2px)", marginRight: "4px" }}
                 />
@@ -69,7 +72,7 @@ function VerifyEmail() {
             </Link>
 
             <button
-              className="resend-btn"
+              className="resend-btn flex"
               onClick={() => dispatch(sendOtp(signupData.email, navigate))}
             >
               <RxCounterClockwiseClock

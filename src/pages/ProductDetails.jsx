@@ -31,7 +31,6 @@ const ProductDetails = () => {
   const [addressModal, setAddressModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   const { selectedSize } = useSelector((state) => state.cart);
   const { user } = useSelector((state) => state.profile);
   const { token } = useSelector((state) => state.auth);
@@ -46,17 +45,17 @@ const ProductDetails = () => {
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true)
+        setLoading(true);
         const products = await getFullProductDetails(productId);
         // console.log("productdetails ====> ", products);
         if (products) {
           setProductDetails(products);
         }
-        setLoading(false)
+        setLoading(false);
       } catch (error) {
         console.log("Can't get Product Details");
-      }finally{
-        setLoading(false)
+      } finally {
+        setLoading(false);
       }
     })();
   }, [productId]);
@@ -141,10 +140,13 @@ const ProductDetails = () => {
   const buyProduct = async (addressData) => {
     const { address, city, pincode, state, country } = addressData;
     let sizeData;
-    if(productDetails.category.name === "Clothing" || productDetails.category.name === "Footwear"){
-        sizeData = [{ productId: productId, quantity: 1, size: selectedSize }]
-    }else{
-        sizeData = [{ productId: productId, quantity: 1}]
+    if (
+      productDetails.category.name === "Clothing" ||
+      productDetails.category.name === "Footwear"
+    ) {
+      sizeData = [{ productId: productId, quantity: 1, size: selectedSize }];
+    } else {
+      sizeData = [{ productId: productId, quantity: 1 }];
     }
     const orderData = {
       orderItems: sizeData,
@@ -166,12 +168,12 @@ const ProductDetails = () => {
     window.open(whatsappUrl, "_blank");
   };
 
-  if(loading){
+  if (loading) {
     return (
       <div className="min-h-[calc(100vh-57px)] grid place-items-center">
         <div className="spinner"></div>
       </div>
-    )
+    );
   }
 
   return (
@@ -197,11 +199,11 @@ const ProductDetails = () => {
 
             <div className="flex flex-col gap-4  max-[1023px]:w-full mx-auto">
               <div className="max-w-[350px] max-h-[350px] bg-white">
-              <img
-                src={selectedImg || imgUrls?.[0]}
-                alt={productDetails?.productName}
-                className=" max-w-[350px] max-h-[350px] object-contain aspect-square hidden lg:block"
-              />
+                <img
+                  src={selectedImg || imgUrls?.[0]}
+                  alt={productDetails?.productName}
+                  className=" max-w-[350px] max-h-[350px] object-contain aspect-square hidden lg:block"
+                />
               </div>
               <div className="flex justify-around gap-4 p-5  max-[1023px]:bg-[#161d29a9] max-[1023px]:w-full">
                 <button
@@ -309,8 +311,10 @@ const ProductDetails = () => {
               <div className="flex gap-3 flex-wrap">
                 {productDetails?.sizes.map((size, i) => (
                   <button
-                  type="button"
-                    className={`uppercase ${size.stock === 0 && "opacity-50"} py-0.5 px-4 bg-[#2c333f] rounded-3xl cursor-pointer hover:border border-sky-400 ${
+                    type="button"
+                    className={`uppercase ${
+                      size.stock === 0 && "opacity-50"
+                    } py-0.5 px-4 bg-[#2c333f] rounded-3xl cursor-pointer hover:border border-sky-400 ${
                       selectedSize === size.size && "border border-sky-400"
                     } box-content`}
                     key={i}
@@ -328,7 +332,11 @@ const ProductDetails = () => {
             <p className="text-gray-400 font-medium ">Seller</p>
             <div className="flex gap-x-4 items-center">
               <img
-                src={productDetails?.supplier?.image}
+                src={
+                  productDetails?.supplier?.image
+                    ? productDetails?.supplier?.image
+                    : `https://api.dicebear.com/5.x/initials/svg?seed=${productDetails?.supplier?.name}`
+                }
                 alt="SellerImg"
                 className="object-cover max-w-[30px] rounded-full"
               />
