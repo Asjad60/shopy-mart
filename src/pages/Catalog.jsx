@@ -12,7 +12,7 @@ import FilterProductsSidebar from "../components/core/Catalog/FilterProductsSide
 function Catalog() {
   const { catalogName } = useParams();
   const [catalogPageData, setCatalogPageData] = useState(null);
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState(2);
   const [categoryId, setCategoryId] = useState("");
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [loading, setLoading] = useState(false);
