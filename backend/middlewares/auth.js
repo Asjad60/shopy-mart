@@ -42,7 +42,7 @@ exports.auth = async (req, res, next) => {
   }
 };
 
-// Checking Visitor or Not
+// Checking Visitor/Buyer or Not
 
 exports.isVisitor = async (req, res, next) => {
   try {
