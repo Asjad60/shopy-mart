@@ -136,7 +136,7 @@ const ProductReviews = ({ ratingAndReviews, productId }) => {
                 </p>
                 <p className="text-sm">{ratingAndReview.review}</p>
                 <p className="text-gray-400 text-sm">
-                  Customer: {ratingAndReview.user.name}
+                  Customer: {ratingAndReview?.user?.name}
                 </p>
               </div>
             );
